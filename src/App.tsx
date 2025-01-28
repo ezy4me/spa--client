@@ -1,12 +1,9 @@
-import './App.css'
+// src/App.tsx
+import React from 'react';
+import RouterConfig from './router';
 
-function App() {
+const App: React.FC = () => {
+  return <RouterConfig />;
+};
 
-  return (
-    <>
-     
-    </>
-  )
-}
-
-export default App
+export default App;
