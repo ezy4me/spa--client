@@ -1,17 +1,15 @@
 import React, { ReactNode } from 'react';
-import { Box, CssBaseline, Toolbar } from '@mui/material';
-import { SidebarProvider, useSidebar } from '../../contexts/SidebarContext';
+import { Box, CssBaseline } from '@mui/material';
+import { SidebarProvider } from '../../contexts/SidebarContext';
 import AppBar from '../AppBar';
 import Sidebar from '../Sidebar';
 
-const drawerWidth = 240;
 
 interface AdminLayoutProps {
   children: ReactNode;
 }
 
 const MainContent: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { isOpen } = useSidebar();
 
   return (
     <Box
@@ -19,11 +17,11 @@ const MainContent: React.FC<{ children: ReactNode }> = ({ children }) => {
       sx={{
         flexGrow: 1,
         p: 3,
+        width: "100%",
+        height: 'calc(100vh - 128px)',
         transition: 'margin 0.3s ease-in-out',
-        marginLeft: isOpen ? `${drawerWidth}px` : '0',
       }}
     >
-      <Toolbar />
       {children}
     </Box>
   );
