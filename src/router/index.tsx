@@ -1,29 +1,61 @@
-// src/router/index.tsx
-import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Layout from '../components/Layout/Layout';
-import Home from '../pages/Home';
+// src/routes.js
+import { Routes, Route } from 'react-router-dom';
+import Login from '../pages/Auth/Login';
+import AdminDashboard from '../pages/Admin/Dashboard';
+import ManagerDashboard from '../pages/Manager/Dashboard';
+import AuthLayout from '../components/Layout/AuthLayout';
+import AdminLayout from '../components/Layout/AdminLayout';
+import ManagerLayout from '../components/Layout/ManagerLayout';
 import Bookings from '../pages/Bookings';
-import Stock from '../pages/Stock';
+import Payment from '../pages/Payment';
+import Inventory from '../pages/Inventory';
 import Revenue from '../pages/Revenue';
-import Notifications from '../pages/Notifications';
 import Employees from '../pages/Employees';
-import Admin from '../pages/Admin';
+import Notifications from '../pages/Notifications';
 
-const RouterConfig: React.FC = () => {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout><Home /></Layout>} />
-        <Route path="/bookings" element={<Layout><Bookings /></Layout>} />
-        <Route path="/stock" element={<Layout><Stock /></Layout>} />
-        <Route path="/revenue" element={<Layout><Revenue /></Layout>} />
-        <Route path="/notifications" element={<Layout><Notifications /></Layout>} />
-        <Route path="/employees" element={<Layout><Employees /></Layout>} />
-        <Route path="/admin" element={<Layout><Admin /></Layout>} />
-      </Routes>
-    </BrowserRouter>
-  );
-};
+const AppRoutes = () => (
+  <Routes>
+    {/* Страницы авторизации */}
+    <Route
+      path="/"
+      element={
+        <AuthLayout>
+          <Login />
+        </AuthLayout>
+      }
+    />
 
-export default RouterConfig;
+    {/* Администратор */}
+    <Route
+      path="/admin/*"
+      element={
+        <AdminLayout>
+          <Routes>
+            <Route path="/dashboard" element={<AdminDashboard />} />
+            <Route path="/booking" element={<Bookings />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/revenue" element={<Revenue />} />
+            <Route path="/employees" element={<Employees />} />
+            <Route path="/notification" element={<Notifications />} />
+          </Routes>
+        </AdminLayout>
+      }
+    />
+
+    {/* Управляющий */}
+    <Route
+      path="/manager/*"
+      element={
+        <ManagerLayout>
+          <Routes>
+            <Route path="/dashboard" element={<ManagerDashboard />} />
+            {/* Добавьте другие страницы управляющего */}
+          </Routes>
+        </ManagerLayout>
+      }
+    />
+  </Routes>
+);
+
+export default AppRoutes;

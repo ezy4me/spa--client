@@ -2,7 +2,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import Sidebar from '../components/Sidebar';
-import Header from '../components/Header';
+import Header from '../components/AppBar';
 
 const BookingsLayout = ({ children }: { children: React.ReactNode }) => {
   return (
