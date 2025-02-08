@@ -35,7 +35,7 @@ const AppRoutes = () => (
             <Route path="" element={<Navigate to="dashboard" replace />} />
             <Route path="/dashboard" element={<AdminDashboard />} />
             <Route path="/booking" element={<Bookings />} />
-            <Route path="/clients" element={<Clients />} />
+            <Route path="/client" element={<Clients />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/revenue" element={<Revenue />} />
@@ -55,7 +55,7 @@ const AppRoutes = () => (
             <Route path="" element={<Navigate to="dashboard" replace />} />
             <Route path="/dashboard" element={<ManagerDashboard />} />
             <Route path="/booking" element={<Bookings />} />
-            <Route path="/clients" element={<Clients />} />
+            <Route path="/client" element={<Clients />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/revenue" element={<Revenue />} />
