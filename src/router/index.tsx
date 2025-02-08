@@ -1,17 +1,18 @@
 // src/routes.js
-import { Routes, Route } from 'react-router-dom';
-import Login from '../pages/Auth/Login';
-import AdminDashboard from '../pages/Admin/Dashboard';
-import ManagerDashboard from '../pages/Manager/Dashboard';
-import AuthLayout from '../components/Layout/AuthLayout';
-import AdminLayout from '../components/Layout/AdminLayout';
-import ManagerLayout from '../components/Layout/ManagerLayout';
-import Bookings from '../pages/Bookings';
-import Payment from '../pages/Payment';
-import Inventory from '../pages/Inventory';
-import Revenue from '../pages/Revenue';
-import Employees from '../pages/Employees';
-import Notifications from '../pages/Notifications';
+import { Routes, Route, Navigate } from "react-router-dom";
+import Login from "../pages/Auth/Login";
+import AdminDashboard from "../pages/Admin/Dashboard";
+import ManagerDashboard from "../pages/Manager/Dashboard";
+import AuthLayout from "../components/Layout/AuthLayout";
+import AdminLayout from "../components/Layout/AdminLayout";
+import ManagerLayout from "../components/Layout/ManagerLayout";
+import Bookings from "../pages/Bookings";
+import Payment from "../pages/Payment";
+import Inventory from "../pages/Inventory";
+import Revenue from "../pages/Revenue";
+import Employees from "../pages/Employees";
+import Notifications from "../pages/Notifications";
+import Clients from "../pages/Clients";
 
 const AppRoutes = () => (
   <Routes>
@@ -31,8 +32,10 @@ const AppRoutes = () => (
       element={
         <AdminLayout>
           <Routes>
+            <Route path="" element={<Navigate to="dashboard" replace />} />
             <Route path="/dashboard" element={<AdminDashboard />} />
             <Route path="/booking" element={<Bookings />} />
+            <Route path="/clients" element={<Clients />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/revenue" element={<Revenue />} />
@@ -49,8 +52,15 @@ const AppRoutes = () => (
       element={
         <ManagerLayout>
           <Routes>
+            <Route path="" element={<Navigate to="dashboard" replace />} />
             <Route path="/dashboard" element={<ManagerDashboard />} />
-            {/* Добавьте другие страницы управляющего */}
+            <Route path="/booking" element={<Bookings />} />
+            <Route path="/clients" element={<Clients />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/revenue" element={<Revenue />} />
+            <Route path="/employees" element={<Employees />} />
+            <Route path="/notification" element={<Notifications />} />
           </Routes>
         </ManagerLayout>
       }
