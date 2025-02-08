@@ -3,6 +3,7 @@ import { Typography, Modal, Box, Grid, Button, TextField } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { Edit, Delete } from "@mui/icons-material";
 import { useGetClientsQuery, useUpdateClientMutation, useDeleteClientMutation } from "../services/clientsApi";
+import ConfirmDialog from "../components/UI/ConfirmDialog"; 
 
 const Clients = () => {
   const { data: clients = [], isLoading, isError } = useGetClientsQuery();
@@ -10,7 +11,9 @@ const Clients = () => {
   const [deleteClient] = useDeleteClientMutation();
 
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<any | null>(null);
+  const [clientToDelete, setClientToDelete] = useState<number | null>(null);
   const [editData, setEditData] = useState({ fullName: "", phone: "", comment: "" });
 
   const handleOpen = (client: any) => {
@@ -35,11 +38,21 @@ const Clients = () => {
     }
   };
 
-  const handleDeleteClient = async (id: number) => {
-    try {
-      await deleteClient(id).unwrap();
-    } catch (error) {
-      console.error("Ошибка удаления клиента:", error);
+  const handleDeleteClick = (id: number) => {
+    setClientToDelete(id);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (clientToDelete !== null) {
+      try {
+        await deleteClient(clientToDelete).unwrap();
+      } catch (error) {
+        console.error("Ошибка удаления клиента:", error);
+      } finally {
+        setConfirmOpen(false);
+        setClientToDelete(null);
+      }
     }
   };
 
@@ -62,7 +75,7 @@ const Clients = () => {
         <GridActionsCellItem
           icon={<Delete color="error" />}
           label="Удалить"
-          onClick={() => handleDeleteClient(row.id)}
+          onClick={() => handleDeleteClick(row.id)}
         />,
       ],
     },
@@ -133,6 +146,16 @@ const Clients = () => {
           </Box>
         </Box>
       </Modal>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Удаление клиента"
+        message="Вы уверены, что хотите удалить этого клиента? Это действие необратимо."
+        confirmText="Удалить"
+        cancelText="Отмена"
+      />
     </div>
   );
 };

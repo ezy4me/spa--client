@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Typography, Modal, Box, Grid } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CheckCircleOutline, CancelOutlined, InfoOutlined } from "@mui/icons-material";
 import { useGetBookingsQuery, useUpdateBookingMutation } from "../services/bookingsApi";
+import ConfirmDialog from "../components/UI/ConfirmDialog";
 
 const Bookings = () => {
   const { data: bookings = [], isLoading, isError } = useGetBookingsQuery();
   const [updateBooking] = useUpdateBookingMutation();
+  
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
+  const [statusToUpdate, setStatusToUpdate] = useState<string | null>(null);
 
   const handleOpen = (booking: any) => {
     setSelectedBooking(booking);
@@ -20,11 +24,23 @@ const Bookings = () => {
     setSelectedBooking(null);
   };
 
-  const handleStatusUpdate = async (booking: any, status: string) => {
-    try {
-      await updateBooking({ id: booking.id, status }).unwrap();
-    } catch (error) {
-      console.error("Ошибка обновления статуса бронирования:", error);
+  const handleStatusChange = (booking: any, status: string) => {
+    setSelectedBooking(booking);
+    setStatusToUpdate(status);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmStatusUpdate = async () => {
+    if (selectedBooking && statusToUpdate) {
+      try {
+        await updateBooking({ id: selectedBooking.id, status: statusToUpdate }).unwrap();
+      } catch (error) {
+        console.error("Ошибка обновления статуса бронирования:", error);
+      } finally {
+        setConfirmOpen(false);
+        setSelectedBooking(null);
+        setStatusToUpdate(null);
+      }
     }
   };
 
@@ -53,12 +69,12 @@ const Bookings = () => {
         <GridActionsCellItem
           icon={<CheckCircleOutline color="success" />}
           label="Подтвердить"
-          onClick={() => handleStatusUpdate(row, "confirmed")}
+          onClick={() => handleStatusChange(row, "confirmed")}
         />,
         <GridActionsCellItem
           icon={<CancelOutlined color="error" />}
           label="Отменить"
-          onClick={() => handleStatusUpdate(row, "canceled")}
+          onClick={() => handleStatusChange(row, "canceled")}
         />,
         <GridActionsCellItem
           icon={<InfoOutlined />}
@@ -128,6 +144,16 @@ const Bookings = () => {
           </Box>
         </Box>
       </Modal>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmStatusUpdate}
+        title="Изменение статуса"
+        message={`Вы уверены, что хотите изменить статус на "${statusToUpdate}"?`}
+        confirmText="Подтвердить"
+        cancelText="Отмена"
+      />
     </div>
   );
 };

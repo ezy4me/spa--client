@@ -1,9 +1,13 @@
-
-import  { useState } from "react";
+import { useState } from "react";
 import { Typography, Modal, Box, Button } from "@mui/material";
 import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
 import { Edit, Delete } from "@mui/icons-material";
-import { useGetEmployeesQuery, useUpdateEmployeeMutation, useDeleteEmployeeMutation } from "../services/employeesApi";
+import {
+  useGetEmployeesQuery,
+  useUpdateEmployeeMutation,
+  useDeleteEmployeeMutation,
+} from "../services/employeesApi";
+import ConfirmDialog from "../components/UI/ConfirmDialog";
 
 const style = {
   position: "absolute",
@@ -20,8 +24,11 @@ const Employees = () => {
   const { data: employees = [], isLoading, isError } = useGetEmployeesQuery();
   const [updateEmployee] = useUpdateEmployeeMutation();
   const [deleteEmployee] = useDeleteEmployeeMutation();
+
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
+  const [employeeToDelete, setEmployeeToDelete] = useState<number | null>(null);
 
   const handleOpen = (employee: any) => {
     setSelectedEmployee(employee);
@@ -41,11 +48,21 @@ const Employees = () => {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    try {
-      await deleteEmployee(id).unwrap();
-    } catch (error) {
-      console.error("Ошибка удаления сотрудника:", error);
+  const handleDeleteClick = (id: number) => {
+    setEmployeeToDelete(id);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (employeeToDelete !== null) {
+      try {
+        await deleteEmployee(employeeToDelete).unwrap();
+      } catch (error) {
+        console.error("Ошибка удаления сотрудника:", error);
+      } finally {
+        setConfirmOpen(false);
+        setEmployeeToDelete(null);
+      }
     }
   };
 
@@ -69,7 +86,7 @@ const Employees = () => {
         <GridActionsCellItem
           icon={<Delete />}
           label="Удалить"
-          onClick={() => handleDelete(row.id)}
+          onClick={() => handleDeleteClick(row.id)}
           color="error"
         />,
       ],
@@ -122,12 +139,21 @@ const Employees = () => {
             variant="contained"
             color="primary"
             onClick={() => handleStatusUpdate(selectedEmployee, "Активен")}
-            sx={{ mt: 2 }}
-          >
+            sx={{ mt: 2 }}>
             Сделать активным
           </Button>
         </Box>
       </Modal>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Удаление сотрудника"
+        message="Вы уверены, что хотите удалить этого сотрудника? Это действие необратимо."
+        confirmText="Удалить"
+        cancelText="Отмена"
+      />
     </div>
   );
 };
