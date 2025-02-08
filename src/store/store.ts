@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import { api } from "./api";
 import { dashboardApi } from "../services/dashboardApi";
 import { bookingsApi } from "../services/bookingsApi";
+import { clientsApi } from "../services/clientsApi";
 
 export const store = configureStore({
   reducer: {
     [api.reducerPath]: api.reducer,
     dashboard: dashboardApi.reducer,
     bookings: bookingsApi.reducer,
+    clientsApi: clientsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(api.middleware),
