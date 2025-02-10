@@ -19,30 +19,33 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { Link, useNavigate } from "react-router-dom";
 import { useSidebar } from "../contexts/SidebarContext";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/slice/authSlice";
+import { RootState } from "../store/store";
 
 const drawerWidth = 240;
 
 const Sidebar: React.FC = () => {
   const { isOpen } = useSidebar();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const userRole = useSelector((state: RootState) => state.auth.user?.role);
 
   const handleLogout = () => {
-    navigate("/"); 
+    dispatch(logout());
+    navigate("/");
   };
 
+  // Меню в зависимости от роли пользователя
   const menuItems = [
-    { text: "Главная", path: "/admin/dashboard", icon: <DashboardIcon /> },
-    { text: "Бронирование", path: "/admin/booking", icon: <BookIcon /> },
-    { text: "Клиенты", path: "/admin/client", icon: <PersonIcon /> },
-    { text: "Оплата", path: "/admin/payment", icon: <PaymentIcon /> },
-    { text: "Склад", path: "/admin/inventory", icon: <InventoryIcon /> },
-    { text: "Выручка", path: "/admin/revenue", icon: <MonetizationOnIcon /> },
-    { text: "Сотрудники", path: "/admin/employees", icon: <PeopleIcon /> },
-    {
-      text: "Уведомления",
-      path: "/admin/notification",
-      icon: <NotificationsIcon />,
-    },
+    { text: "Главная", path: `/${userRole?.toLowerCase()}/dashboard`, icon: <DashboardIcon /> },
+    { text: "Бронирование", path: `/${userRole?.toLowerCase()}/booking`, icon: <BookIcon /> },
+    { text: "Клиенты", path: `/${userRole?.toLowerCase()}/client`, icon: <PersonIcon /> },
+    { text: "Оплата", path: `/${userRole?.toLowerCase()}/payment`, icon: <PaymentIcon /> },
+    { text: "Склад", path: `/${userRole?.toLowerCase()}/inventory`, icon: <InventoryIcon /> },
+    { text: "Выручка", path: `/${userRole?.toLowerCase()}/revenue`, icon: <MonetizationOnIcon /> },
+    { text: "Сотрудники", path: `/${userRole?.toLowerCase()}/employees`, icon: <PeopleIcon /> },
+    { text: "Уведомления", path: `/${userRole?.toLowerCase()}/notification`, icon: <NotificationsIcon /> },
   ];
 
   return (
@@ -63,7 +66,6 @@ const Sidebar: React.FC = () => {
       }}>
       <Toolbar />
 
-      {/* Основные пункты меню */}
       <List sx={{ flexGrow: 1, padding: 0 }}>
         {menuItems.map(({ text, path, icon }) => (
           <ListItemButton
@@ -77,7 +79,6 @@ const Sidebar: React.FC = () => {
         ))}
       </List>
 
-      {/* Разделитель и кнопка выхода */}
       <Divider />
       <List>
         <ListItemButton onClick={handleLogout} sx={{ paddingY: 1.5 }}>
