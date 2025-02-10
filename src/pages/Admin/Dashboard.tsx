@@ -12,8 +12,8 @@ const Dashboard: React.FC = () => {
     <div className="p-4">
       <Grid container spacing={4}>
         <Grid item xs={12} sm={6} md={3}>
-          <Paper elevation={3}>
-            <Card>
+          <Paper elevation={3} >
+            <Card sx={{ minHeight: 200 }}>
               <CardContent>
                 <Typography variant="h6" color="textSecondary" gutterBottom>
                   Выручка (30 дней)
@@ -28,7 +28,7 @@ const Dashboard: React.FC = () => {
 
         <Grid item xs={12} sm={6} md={3}>
           <Paper elevation={3}>
-            <Card>
+            <Card sx={{ minHeight: 200 }}>
               <CardContent>
                 <Typography variant="h6" color="textSecondary" gutterBottom>
                   Число клиентов
@@ -43,7 +43,7 @@ const Dashboard: React.FC = () => {
 
         <Grid item xs={12} sm={6} md={3}>
           <Paper elevation={3}>
-            <Card>
+            <Card sx={{ minHeight: 200 }}>
               <CardContent>
                 <Typography variant="h6" color="textSecondary" gutterBottom>
                   Остатки товаров
@@ -64,7 +64,7 @@ const Dashboard: React.FC = () => {
 
         <Grid item xs={12} sm={6} md={3}>
           <Paper elevation={3}>
-            <Card>
+            <Card sx={{ minHeight: 200 }}>
               <CardContent>
                 <Typography variant="h6" color="textSecondary" gutterBottom>
                   Активные бронирования

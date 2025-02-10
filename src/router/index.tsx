@@ -1,4 +1,3 @@
-// src/routes.js
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/Auth/Login";
 import AdminDashboard from "../pages/Admin/Dashboard";
@@ -13,10 +12,10 @@ import Revenue from "../pages/Revenue";
 import Employees from "../pages/Employees";
 import Notifications from "../pages/Notifications";
 import Clients from "../pages/Clients";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const AppRoutes = () => (
   <Routes>
-    {/* Страницы авторизации */}
     <Route
       path="/"
       element={
@@ -26,45 +25,47 @@ const AppRoutes = () => (
       }
     />
 
-    {/* Администратор */}
-    <Route
-      path="/admin/*"
-      element={
-        <AdminLayout>
-          <Routes>
-            <Route path="" element={<Navigate to="dashboard" replace />} />
-            <Route path="/dashboard" element={<AdminDashboard />} />
-            <Route path="/booking" element={<Bookings />} />
-            <Route path="/client" element={<Clients />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/inventory" element={<Inventory />} />
-            <Route path="/revenue" element={<Revenue />} />
-            <Route path="/employees" element={<Employees />} />
-            <Route path="/notification" element={<Notifications />} />
-          </Routes>
-        </AdminLayout>
-      }
-    />
+    <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+      <Route
+        path="/admin/*"
+        element={
+          <AdminLayout>
+            <Routes>
+              <Route path="" element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="booking" element={<Bookings />} />
+              <Route path="client" element={<Clients />} />
+              <Route path="payment" element={<Payment />} />
+              <Route path="inventory" element={<Inventory />} />
+              <Route path="revenue" element={<Revenue />} />
+              <Route path="employees" element={<Employees />} />
+              <Route path="notification" element={<Notifications />} />
+            </Routes>
+          </AdminLayout>
+        }
+      />
+    </Route>
 
-    {/* Управляющий */}
-    <Route
-      path="/manager/*"
-      element={
-        <ManagerLayout>
-          <Routes>
-            <Route path="" element={<Navigate to="dashboard" replace />} />
-            <Route path="/dashboard" element={<ManagerDashboard />} />
-            <Route path="/booking" element={<Bookings />} />
-            <Route path="/client" element={<Clients />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/inventory" element={<Inventory />} />
-            <Route path="/revenue" element={<Revenue />} />
-            <Route path="/employees" element={<Employees />} />
-            <Route path="/notification" element={<Notifications />} />
-          </Routes>
-        </ManagerLayout>
-      }
-    />
+    <Route element={<ProtectedRoute allowedRoles={["MANAGER"]} />}>
+      <Route
+        path="/manager/*"
+        element={
+          <ManagerLayout>
+            <Routes>
+              <Route path="" element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<ManagerDashboard />} />
+              <Route path="booking" element={<Bookings />} />
+              <Route path="client" element={<Clients />} />
+              <Route path="payment" element={<Payment />} />
+              <Route path="inventory" element={<Inventory />} />
+              <Route path="revenue" element={<Revenue />} />
+              <Route path="employees" element={<Employees />} />
+              <Route path="notification" element={<Notifications />} />
+            </Routes>
+          </ManagerLayout>
+        }
+      />
+    </Route>
   </Routes>
 );
 

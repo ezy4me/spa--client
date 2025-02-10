@@ -3,6 +3,8 @@ import { api } from "./api";
 import { dashboardApi } from "../services/dashboardApi";
 import { bookingsApi } from "../services/bookingsApi";
 import { clientsApi } from "../services/clientsApi";
+import authReducer from "./slice/authSlice";
+// import { authApi } from "../services/authApi";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +12,7 @@ export const store = configureStore({
     dashboard: dashboardApi.reducer,
     bookings: bookingsApi.reducer,
     clientsApi: clientsApi.reducer,
+    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(api.middleware),
