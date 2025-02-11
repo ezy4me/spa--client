@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Typography, Button } from "@mui/material";
+import { Typography, Button, Divider } from "@mui/material";
 import { PersonAdd } from "@mui/icons-material";
 import {
   useGetClientsQuery,
@@ -12,7 +12,12 @@ import ClientForm from "../components/Forms/ClientForm";
 import ClientsTable from "../components/Tables/ClientsTable";
 
 const Clients = () => {
-  const { data: clients = [], isLoading, isError, refetch } = useGetClientsQuery();
+  const {
+    data: clients = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useGetClientsQuery();
   const [updateClient] = useUpdateClientMutation();
   const [deleteClient] = useDeleteClientMutation();
   const [createClient] = useCreateClientMutation();
@@ -39,7 +44,11 @@ const Clients = () => {
     setOpen(false);
   };
 
-  const handleSaveClient = async (clientData: { fullName: string; phone: string; comment: string }) => {
+  const handleSaveClient = async (clientData: {
+    fullName: string;
+    phone: string;
+    comment: string;
+  }) => {
     try {
       if (isAdding) {
         await createClient(clientData).unwrap();
@@ -47,7 +56,7 @@ const Clients = () => {
         await updateClient({ id: selectedClient.id, ...clientData }).unwrap();
       }
       handleClose();
-      refetch(); 
+      refetch();
     } catch (error) {
       console.error("Ошибка сохранения клиента:", error);
     }
@@ -62,7 +71,7 @@ const Clients = () => {
     if (clientToDelete !== null) {
       try {
         await deleteClient(clientToDelete).unwrap();
-        refetch(); 
+        refetch();
       } catch (error) {
         console.error("Ошибка удаления клиента:", error);
       } finally {
@@ -77,11 +86,12 @@ const Clients = () => {
       <Typography variant="h4" gutterBottom>
         Клиенты
       </Typography>
+      <Divider />
       <Button
         variant="contained"
         startIcon={<PersonAdd />}
         onClick={handleOpenAdd}
-        sx={{ mb: 2 }}>
+        sx={{ my: 2 }}>
         Добавить клиента
       </Button>
 

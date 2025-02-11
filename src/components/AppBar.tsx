@@ -4,9 +4,11 @@ import {
   Toolbar,
   Typography,
   IconButton,
+  Box,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useSidebar } from "../contexts/SidebarContext";
+import UserInfo from "./UI/UserInfo";
 
 const AppBar: React.FC = () => {
   const { toggleSidebar } = useSidebar();
@@ -19,12 +21,17 @@ const AppBar: React.FC = () => {
           edge="start"
           color="inherit"
           aria-label="menu"
-          onClick={toggleSidebar}>
+          onClick={toggleSidebar}
+        >
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" noWrap>
           Панель управления
         </Typography>
+        <Box sx={{ flexGrow: 1 }} />
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <UserInfo /> 
+        </Box>
       </Toolbar>
     </MuiAppBar>
   );
