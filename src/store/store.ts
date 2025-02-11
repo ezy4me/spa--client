@@ -4,7 +4,6 @@ import { dashboardApi } from "../services/dashboardApi";
 import { bookingsApi } from "../services/bookingsApi";
 import { clientsApi } from "../services/clientsApi";
 import authReducer from "./slice/authSlice";
-// import { authApi } from "../services/authApi";
 
 export const store = configureStore({
   reducer: {

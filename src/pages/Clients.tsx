@@ -1,40 +1,55 @@
 import { useState } from "react";
-import { Typography, Modal, Box, Grid, Button, TextField } from "@mui/material";
-import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
-import { Edit, Delete } from "@mui/icons-material";
-import { useGetClientsQuery, useUpdateClientMutation, useDeleteClientMutation } from "../services/clientsApi";
-import ConfirmDialog from "../components/UI/ConfirmDialog"; 
+import { Typography, Button } from "@mui/material";
+import { PersonAdd } from "@mui/icons-material";
+import {
+  useGetClientsQuery,
+  useUpdateClientMutation,
+  useDeleteClientMutation,
+  useCreateClientMutation,
+} from "../services/clientsApi";
+import ConfirmDialog from "../components/UI/ConfirmDialog";
+import ClientForm from "../components/Forms/ClientForm";
+import ClientsTable from "../components/Tables/ClientsTable";
 
 const Clients = () => {
-  const { data: clients = [], isLoading, isError } = useGetClientsQuery();
+  const { data: clients = [], isLoading, isError, refetch } = useGetClientsQuery();
   const [updateClient] = useUpdateClientMutation();
   const [deleteClient] = useDeleteClientMutation();
+  const [createClient] = useCreateClientMutation();
 
   const [open, setOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<any | null>(null);
   const [clientToDelete, setClientToDelete] = useState<number | null>(null);
-  const [editData, setEditData] = useState({ fullName: "", phone: "", comment: "" });
 
-  const handleOpen = (client: any) => {
+  const handleOpenEdit = (client: any) => {
     setSelectedClient(client);
-    setEditData({ fullName: client.fullName, phone: client.phone, comment: client.comment });
+    setIsAdding(false);
+    setOpen(true);
+  };
+
+  const handleOpenAdd = () => {
+    setSelectedClient(null);
+    setIsAdding(true);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setSelectedClient(null);
   };
 
-  const handleUpdateClient = async () => {
-    if (selectedClient) {
-      try {
-        await updateClient({ id: selectedClient.id, ...editData }).unwrap();
-        handleClose();
-      } catch (error) {
-        console.error("Ошибка обновления клиента:", error);
+  const handleSaveClient = async (clientData: { fullName: string; phone: string; comment: string }) => {
+    try {
+      if (isAdding) {
+        await createClient(clientData).unwrap();
+      } else if (selectedClient) {
+        await updateClient({ id: selectedClient.id, ...clientData }).unwrap();
       }
+      handleClose();
+      refetch(); 
+    } catch (error) {
+      console.error("Ошибка сохранения клиента:", error);
     }
   };
 
@@ -47,6 +62,7 @@ const Clients = () => {
     if (clientToDelete !== null) {
       try {
         await deleteClient(clientToDelete).unwrap();
+        refetch(); 
       } catch (error) {
         console.error("Ошибка удаления клиента:", error);
       } finally {
@@ -56,119 +72,46 @@ const Clients = () => {
     }
   };
 
-  const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 90 },
-    { field: "fullName", headerName: "ФИО", width: 200 },
-    { field: "phone", headerName: "Телефон", width: 150 },
-    { field: "comment", headerName: "Комментарий", width: 250 },
-    {
-      field: "actions",
-      type: "actions",
-      headerName: "Действия",
-      width: 150,
-      getActions: ({ row }) => [
-        <GridActionsCellItem
-          icon={<Edit />}
-          label="Редактировать"
-          onClick={() => handleOpen(row)}
-        />,
-        <GridActionsCellItem
-          icon={<Delete color="error" />}
-          label="Удалить"
-          onClick={() => handleDeleteClick(row.id)}
-        />,
-      ],
-    },
-  ];
-
-  if (isLoading) return <Typography>Загрузка...</Typography>;
-  if (isError) return <Typography>Ошибка при загрузке данных.</Typography>;
-
   return (
     <div style={{ padding: 20 }}>
       <Typography variant="h4" gutterBottom>
         Клиенты
       </Typography>
+      <Button
+        variant="contained"
+        startIcon={<PersonAdd />}
+        onClick={handleOpenAdd}
+        sx={{ mb: 2 }}>
+        Добавить клиента
+      </Button>
 
-      <DataGrid
-        rows={clients}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 20,
-            },
-          },
-        }}
-        pageSizeOptions={[20]}
-        disableRowSelectionOnClick
-        getRowId={(row) => row.id}
+      <ClientsTable
+        clients={clients}
+        onEdit={handleOpenEdit}
+        onDelete={handleDeleteClick}
+        isLoading={isLoading}
+        isError={isError}
       />
 
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-title">
-        <Box sx={modalStyle}>
-          <Typography id="modal-title" variant="h6">
-            Редактирование клиента
-          </Typography>
-          <Grid container spacing={2} sx={{ mt: 2 }}>
-            <Grid item xs={12}>
-              <TextField
-                label="ФИО"
-                fullWidth
-                value={editData.fullName}
-                onChange={(e) => setEditData({ ...editData, fullName: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Телефон"
-                fullWidth
-                value={editData.phone}
-                onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Комментарий"
-                fullWidth
-                multiline
-                rows={3}
-                value={editData.comment}
-                onChange={(e) => setEditData({ ...editData, comment: e.target.value })}
-              />
-            </Grid>
-          </Grid>
-          <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end", gap: 1 }}>
-            <Button onClick={handleClose}>Отмена</Button>
-            <Button variant="contained" onClick={handleUpdateClient}>
-              Сохранить
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
+      <ClientForm
+        open={open}
+        onClose={handleClose}
+        onSave={handleSaveClient}
+        client={selectedClient}
+        isAdding={isAdding}
+      />
 
       <ConfirmDialog
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
         onConfirm={handleConfirmDelete}
         title="Удаление клиента"
-        message="Вы уверены, что хотите удалить этого клиента? Это действие необратимо."
+        message="Вы уверены?"
         confirmText="Удалить"
         cancelText="Отмена"
       />
     </div>
   );
-};
-
-const modalStyle = {
-  position: "absolute" as const,
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
 };
 
 export default Clients;

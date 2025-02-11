@@ -1,31 +1,36 @@
 import { api } from "../store/api";
 
-interface Client {
-  id: number;
-  fullName: string;
-  phone: string;
-  comment: string;
-}
-
 export const clientsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getClients: builder.query<Client[], void>({
+    getClients: builder.query<any[], void>({
       query: () => "client",
     }),
-    updateClient: builder.mutation<Client, Partial<Client> & { id: number }>({
-      query: ({ id, ...data }) => ({
-        url: `clients/${id}`,
-        method: "PATCH",
-        body: data,
+    createClient: builder.mutation<void, any>({
+      query: (newClient) => ({
+        url: "client",
+        method: "POST",
+        body: newClient,
       }),
     }),
-    deleteClient: builder.mutation<{ success: boolean; id: number }, number>({
+    updateClient: builder.mutation<void, any>({
+      query: ({ id, ...updates }) => ({
+        url: `client/${id}`,
+        method: "PUT",
+        body: updates,
+      }),
+    }),
+    deleteClient: builder.mutation<void, number>({
       query: (id) => ({
-        url: `clients/${id}`,
+        url: `client/${id}`,
         method: "DELETE",
       }),
     }),
   }),
 });
 
-export const { useGetClientsQuery, useUpdateClientMutation, useDeleteClientMutation } = clientsApi;
+export const {
+  useGetClientsQuery,
+  useCreateClientMutation,
+  useUpdateClientMutation,
+  useDeleteClientMutation,
+} = clientsApi;
