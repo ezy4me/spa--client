@@ -21,7 +21,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSidebar } from "../contexts/SidebarContext";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/slice/authSlice";
-import { RootState } from "../store/store";
+import { RootState } from "../store/store"; 
 
 const drawerWidth = 240;
 
@@ -36,7 +36,6 @@ const Sidebar: React.FC = () => {
     navigate("/");
   };
 
-  // Меню в зависимости от роли пользователя
   const menuItems = [
     { text: "Главная", path: `/${userRole?.toLowerCase()}/dashboard`, icon: <DashboardIcon /> },
     { text: "Бронирование", path: `/${userRole?.toLowerCase()}/booking`, icon: <BookIcon /> },

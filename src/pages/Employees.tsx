@@ -1,52 +1,69 @@
 import { useState } from "react";
-import { Typography, Modal, Box, Button } from "@mui/material";
-import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
-import { Edit, Delete } from "@mui/icons-material";
+import { Typography, Button, Divider } from "@mui/material";
+import { PersonAdd } from "@mui/icons-material";
 import {
   useGetEmployeesQuery,
   useUpdateEmployeeMutation,
   useDeleteEmployeeMutation,
+  useCreateEmployeeMutation,
 } from "../services/employeesApi";
 import ConfirmDialog from "../components/UI/ConfirmDialog";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
+import EmployeesTable from "../components/Tables/EmployeesTable";
+import EmployeeForm from "../components/Forms/EmployeeForm";
 
 const Employees = () => {
-  const { data: employees = [], isLoading, isError } = useGetEmployeesQuery();
+  const {
+    data: employees = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useGetEmployeesQuery();
   const [updateEmployee] = useUpdateEmployeeMutation();
   const [deleteEmployee] = useDeleteEmployeeMutation();
+  const [createEmployee] = useCreateEmployeeMutation();
 
   const [open, setOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
   const [employeeToDelete, setEmployeeToDelete] = useState<number | null>(null);
 
-  const handleOpen = (employee: any) => {
+  const handleOpenEdit = (employee: any) => {
     setSelectedEmployee(employee);
+    setIsAdding(false);
+    setOpen(true);
+  };
+
+  const handleOpenAdd = () => {
+    setSelectedEmployee(null);
+    setIsAdding(true);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setSelectedEmployee(null);
   };
 
-  const handleStatusUpdate = async (employee: any, status: string) => {
+  const handleSaveEmployee = async (employeeData: {
+    fullName: string;
+    phone: string;
+    status: string;
+    userId: number;  
+    locationId: number;  
+  }) => {
     try {
-      await updateEmployee({ id: employee.id, status }).unwrap();
+      if (isAdding) {
+        await createEmployee(employeeData).unwrap();
+      } else if (selectedEmployee) {
+        await updateEmployee({ id: selectedEmployee.id, ...employeeData }).unwrap();
+      }
+      handleClose();
+      refetch();
     } catch (error) {
-      console.error("Ошибка обновления статуса сотрудника:", error);
+      console.error("Ошибка сохранения сотрудника:", error);
     }
   };
+  
 
   const handleDeleteClick = (id: number) => {
     setEmployeeToDelete(id);
@@ -57,6 +74,7 @@ const Employees = () => {
     if (employeeToDelete !== null) {
       try {
         await deleteEmployee(employeeToDelete).unwrap();
+        refetch();
       } catch (error) {
         console.error("Ошибка удаления сотрудника:", error);
       } finally {
@@ -66,84 +84,36 @@ const Employees = () => {
     }
   };
 
-  const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 90 },
-    { field: "fullName", headerName: "ФИО", width: 200 },
-    { field: "phone", headerName: "Телефон", width: 150 },
-    { field: "status", headerName: "Статус", width: 120 },
-    {
-      field: "actions",
-      type: "actions",
-      headerName: "Действия",
-      width: 200,
-      getActions: ({ row }) => [
-        <GridActionsCellItem
-          icon={<Edit />}
-          label="Редактировать"
-          onClick={() => handleOpen(row)}
-          color="primary"
-        />,
-        <GridActionsCellItem
-          icon={<Delete />}
-          label="Удалить"
-          onClick={() => handleDeleteClick(row.id)}
-          color="error"
-        />,
-      ],
-    },
-  ];
-
-  if (isLoading) return <Typography>Загрузка...</Typography>;
-  if (isError) return <Typography>Ошибка при загрузке данных.</Typography>;
-
   return (
     <div style={{ padding: 20 }}>
       <Typography variant="h4" gutterBottom>
         Сотрудники
       </Typography>
+      <Divider />
+      <Button
+        variant="contained"
+        startIcon={<PersonAdd />}
+        onClick={handleOpenAdd}
+        sx={{ my: 2 }}
+      >
+        Добавить сотрудника
+      </Button>
 
-      <DataGrid
-        rows={employees}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 20,
-            },
-          },
-        }}
-        pageSizeOptions={[20]}
-        disableRowSelectionOnClick
-        getRowId={(row) => row.id}
+      <EmployeesTable
+        employees={employees}
+        onEdit={handleOpenEdit}
+        onDelete={handleDeleteClick}
+        isLoading={isLoading}
+        isError={isError}
       />
 
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-title">
-        <Box sx={style}>
-          <Typography id="modal-title" variant="h6" component="h2">
-            Детали сотрудника
-          </Typography>
-          <Box sx={{ mt: 2 }}>
-            {selectedEmployee ? (
-              <Typography>
-                <strong>ФИО:</strong> {selectedEmployee.fullName}
-                <br />
-                <strong>Телефон:</strong> {selectedEmployee.phone}
-                <br />
-                <strong>Статус:</strong> {selectedEmployee.status}
-              </Typography>
-            ) : (
-              <Typography>Данные о сотруднике отсутствуют.</Typography>
-            )}
-          </Box>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleStatusUpdate(selectedEmployee, "Активен")}
-            sx={{ mt: 2 }}>
-            Сделать активным
-          </Button>
-        </Box>
-      </Modal>
+      <EmployeeForm
+        open={open}
+        onClose={handleClose}
+        onSave={handleSaveEmployee}
+        employee={selectedEmployee}
+        isAdding={isAdding}
+      />
 
       <ConfirmDialog
         open={confirmOpen}

@@ -17,7 +17,7 @@ export const employeesApi = api.injectEndpoints({
     updateEmployee: builder.mutation<Employee, Partial<Employee> & { id: number }>({
       query: ({ id, ...data }) => ({
         url: `employee/${id}`,
-        method: "PATCH",
+        method: "PUT",
         body: data,
       }),
     }),
@@ -29,7 +29,15 @@ export const employeesApi = api.injectEndpoints({
     }),
 
     getEmployeeByUserId: builder.query<Employee, number>({
-      query: (userId) => `employee/user/${userId}`, 
+      query: (userId) => `employee/user/${userId}`,
+    }),
+
+    createEmployee: builder.mutation<Employee, Omit<Employee, "id">>({
+      query: (newEmployee) => ({
+        url: "employee",
+        method: "POST",
+        body: newEmployee,
+      }),
     }),
   }),
 });
@@ -38,5 +46,6 @@ export const {
   useGetEmployeesQuery,
   useUpdateEmployeeMutation,
   useDeleteEmployeeMutation,
-  useGetEmployeeByUserIdQuery,  
+  useGetEmployeeByUserIdQuery,
+  useCreateEmployeeMutation, 
 } = employeesApi;
