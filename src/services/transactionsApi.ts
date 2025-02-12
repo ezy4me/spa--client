@@ -7,6 +7,12 @@ interface Client {
   comment: string;
 }
 
+interface TransactionProduct {
+  productId: number;
+  quantity: number;
+  price: number;
+}
+
 interface Transaction {
   id: number;
   name: string;
@@ -16,6 +22,7 @@ interface Transaction {
   date: string;
   clientId: number;
   client: Client;
+  transactionProducts: TransactionProduct[];
 }
 
 export const transactionsApi = api.injectEndpoints({
@@ -23,16 +30,29 @@ export const transactionsApi = api.injectEndpoints({
     getTransactions: builder.query<Transaction[], void>({
       query: () => "transaction",
     }),
+
+    createTransaction: builder.mutation<
+      void,
+      Omit<Transaction, "id" | "client">
+    >({
+      query: (newTransaction) => ({
+        url: "transaction",
+        method: "POST",
+        body: newTransaction,
+      }),
+    }),
+
     updateTransaction: builder.mutation<
       void,
       Partial<Transaction> & { id: number }
     >({
       query: ({ id, ...patch }) => ({
         url: `transaction/${id}`,
-        method: "PATCH",
+        method: "PUT",
         body: patch,
       }),
     }),
+
     deleteTransaction: builder.mutation<void, number>({
       query: (id) => ({
         url: `transaction/${id}`,
@@ -44,6 +64,7 @@ export const transactionsApi = api.injectEndpoints({
 
 export const {
   useGetTransactionsQuery,
+  useCreateTransactionMutation,
   useUpdateTransactionMutation,
   useDeleteTransactionMutation,
 } = transactionsApi;
