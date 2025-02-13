@@ -1,25 +1,22 @@
 import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
 import { Edit, Delete } from "@mui/icons-material";
 import { Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useDeleteTransactionMutation } from "../../services/transactionsApi";
 
-const TransactionsTable: React.FC<any> = ({
+interface TransactionsTableProps {
+  transactions: any[];
+  isLoading: boolean;
+  isError: boolean;
+  onEdit: (transaction: any) => void;
+  onDelete: (id: number) => void;
+}
+
+const TransactionsTable: React.FC<TransactionsTableProps> = ({
   transactions,
   isLoading,
   isError,
+  onEdit,
+  onDelete,
 }) => {
-  const [deleteTransaction] = useDeleteTransactionMutation();
-  const navigate = useNavigate();
-
-  const handleDelete = async (id: number) => {
-    try {
-      await deleteTransaction(id).unwrap();
-    } catch (error) {
-      console.error("Ошибка удаления транзакции:", error);
-    }
-  };
-
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 90 },
     { field: "name", headerName: "Название", width: 200 },
@@ -41,13 +38,13 @@ const TransactionsTable: React.FC<any> = ({
         <GridActionsCellItem
           icon={<Edit />}
           label="Редактировать"
-          onClick={() => navigate(`/transaction/edit/${row.id}`)}
+          onClick={() => onEdit(row)}
           color="primary"
         />,
         <GridActionsCellItem
           icon={<Delete />}
           label="Удалить"
-          onClick={() => handleDelete(row.id)}
+          onClick={() => onDelete(row.id)}
           color="error"
         />,
       ],

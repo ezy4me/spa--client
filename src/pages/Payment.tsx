@@ -74,12 +74,12 @@ const Payment = () => {
     if (transactionToDelete !== null) {
       try {
         await deleteTransaction(transactionToDelete).unwrap();
+        refetch();
       } catch (error) {
         console.error("Ошибка удаления транзакции:", error);
       } finally {
         setConfirmOpen(false);
         setTransactionToDelete(null);
-        refetch();
       }
     }
   };
