@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   Typography,
   Modal,
@@ -11,10 +11,14 @@ import {
   InputLabel,
   FormControl,
   FormHelperText,
+  CircularProgress,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
+import { Autocomplete } from "@mui/material";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useGetLocationsQuery } from "../../services/locationApi";
+import { useGetUsersQuery } from "../../services/usersApi";
 
 interface EmployeeFormProps {
   open: boolean;
@@ -36,7 +40,6 @@ interface EmployeeFormProps {
   isAdding: boolean;
 }
 
-// Валидация с использованием Yup
 const validationSchema = Yup.object({
   fullName: Yup.string().required("ФИО обязательно"),
   phone: Yup.string()
@@ -63,7 +66,16 @@ const EmployeeForm = ({
     resolver: yupResolver(validationSchema),
   });
 
-  const [statusOptions] = useState(["Активен", "Неактивен"]); // Пример статусов
+  const {
+    data: users = [],
+    isLoading: isUsersLoading,
+    isError: isUsersError,
+  } = useGetUsersQuery();
+  const {
+    data: locations = [],
+    isLoading: isLocationsLoading,
+    isError: isLocationsError,
+  } = useGetLocationsQuery();
 
   useEffect(() => {
     if (employee) {
@@ -131,48 +143,81 @@ const EmployeeForm = ({
                   <FormControl fullWidth error={!!errors.status}>
                     <InputLabel id="status-label">Статус</InputLabel>
                     <Select {...field} labelId="status-label" label="Статус">
-                      {statusOptions.map((status) => (
-                        <MenuItem key={status} value={status}>
-                          {status}
-                        </MenuItem>
-                      ))}
+                      <MenuItem value="Активен">Активен</MenuItem>
+                      <MenuItem value="Неактивен">Неактивен</MenuItem>
                     </Select>
                     <FormHelperText>{errors.status?.message}</FormHelperText>
                   </FormControl>
                 )}
               />
             </Grid>
+
+            {/* Поле выбора пользователя */}
             <Grid item xs={12}>
-              <Controller
-                name="userId"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="ID пользователя"
-                    fullWidth
-                    error={!!errors.userId}
-                    helperText={errors.userId?.message}
-                    type="number"
-                  />
-                )}
-              />
+              {isUsersLoading ? (
+                <CircularProgress size={24} />
+              ) : isUsersError ? (
+                <Typography color="error">
+                  Ошибка загрузки пользователей
+                </Typography>
+              ) : (
+                <Controller
+                  name="userId"
+                  control={control}
+                  render={({ field }) => (
+                    <Autocomplete
+                      options={users}
+                      getOptionLabel={(option) => option.username}
+                      value={
+                        users.find((user) => user.id === field.value) || null
+                      } // Установка дефолтного значения
+                      onChange={(_, value) => field.onChange(value?.id || "")}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Пользователь"
+                          error={!!errors.userId}
+                          helperText={errors.userId?.message}
+                        />
+                      )}
+                    />
+                  )}
+                />
+              )}
             </Grid>
+
+            {/* Поле выбора локации */}
             <Grid item xs={12}>
-              <Controller
-                name="locationId"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="ID локации"
-                    fullWidth
-                    error={!!errors.locationId}
-                    helperText={errors.locationId?.message}
-                    type="number"
-                  />
-                )}
-              />
+              {isLocationsLoading ? (
+                <CircularProgress size={24} />
+              ) : isLocationsError ? (
+                <Typography color="error">Ошибка загрузки локаций</Typography>
+              ) : (
+                <Controller
+                  name="locationId"
+                  control={control}
+                  render={({ field }) => (
+                    <Autocomplete
+                      options={locations}
+                      getOptionLabel={(option) => option.name}
+                      value={
+                        locations.find(
+                          (location) => location.id === field.value
+                        ) || null
+                      } // Установка дефолтного значения
+                      onChange={(_, value) => field.onChange(value?.id || "")}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Локация"
+                          error={!!errors.locationId}
+                          helperText={errors.locationId?.message}
+                        />
+                      )}
+                    />
+                  )}
+                />
+              )}
             </Grid>
           </Grid>
           <Box
