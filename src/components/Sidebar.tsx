@@ -17,11 +17,13 @@ import PersonIcon from "@mui/icons-material/Person";
 import PeopleIcon from "@mui/icons-material/People";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+
 import { Link, useNavigate } from "react-router-dom";
 import { useSidebar } from "../contexts/SidebarContext";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/slice/authSlice";
-import { RootState } from "../store/store"; 
+import { RootState } from "../store/store";
 
 const drawerWidth = 240;
 
@@ -37,14 +39,51 @@ const Sidebar: React.FC = () => {
   };
 
   const menuItems = [
-    { text: "Главная", path: `/${userRole?.toLowerCase()}/dashboard`, icon: <DashboardIcon /> },
-    { text: "Бронирование", path: `/${userRole?.toLowerCase()}/booking`, icon: <BookIcon /> },
-    { text: "Клиенты", path: `/${userRole?.toLowerCase()}/client`, icon: <PersonIcon /> },
-    { text: "Оплата", path: `/${userRole?.toLowerCase()}/payment`, icon: <PaymentIcon /> },
-    { text: "Склад", path: `/${userRole?.toLowerCase()}/inventory`, icon: <InventoryIcon /> },
-    { text: "Выручка", path: `/${userRole?.toLowerCase()}/revenue`, icon: <MonetizationOnIcon /> },
-    { text: "Сотрудники", path: `/${userRole?.toLowerCase()}/employees`, icon: <PeopleIcon /> },
-    { text: "Уведомления", path: `/${userRole?.toLowerCase()}/notification`, icon: <NotificationsIcon /> },
+    {
+      text: "Главная",
+      path: `/${userRole?.toLowerCase()}/dashboard`,
+      icon: <DashboardIcon />,
+    },
+    {
+      text: "Бронирование",
+      path: `/${userRole?.toLowerCase()}/booking`,
+      icon: <BookIcon />,
+    },
+    {
+      text: "Клиенты",
+      path: `/${userRole?.toLowerCase()}/client`,
+      icon: <PersonIcon />,
+    },
+    {
+      text: "Оплата",
+      path: `/${userRole?.toLowerCase()}/payment`,
+      icon: <PaymentIcon />,
+    },
+    {
+      text: "Склад",
+      path: `/${userRole?.toLowerCase()}/inventory`,
+      icon: <InventoryIcon />,
+    },
+    {
+      text: "Выручка",
+      path: `/${userRole?.toLowerCase()}/revenue`,
+      icon: <MonetizationOnIcon />,
+    },
+    {
+      text: "Сотрудники",
+      path: `/${userRole?.toLowerCase()}/employees`,
+      icon: <PeopleIcon />,
+    },
+    {
+      text: "Уведомления",
+      path: `/${userRole?.toLowerCase()}/notification`,
+      icon: <NotificationsIcon />,
+    },
+    {
+      text: "Смены",
+      path: `/${userRole?.toLowerCase()}/shift`,
+      icon: <AccessTimeIcon />,
+    },
   ];
 
   return (

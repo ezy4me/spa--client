@@ -13,6 +13,7 @@ import Notifications from "../pages/Notifications";
 import Clients from "../pages/Clients";
 import ProtectedRoute from "../components/ProtectedRoute";
 import Revenue from "../pages/Revenue";
+import ShiftTracking from "../pages/ShiftTracking";
 
 const AppRoutes = () => (
   <Routes>
@@ -40,6 +41,7 @@ const AppRoutes = () => (
               <Route path="revenue" element={<Revenue />} />
               <Route path="employees" element={<Employees />} />
               <Route path="notification" element={<Notifications />} />
+              <Route path="shift" element={<ShiftTracking />} />
             </Routes>
           </AdminLayout>
         }
