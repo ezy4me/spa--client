@@ -1,12 +1,12 @@
 import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
-import { Edit, Delete } from "@mui/icons-material";
-import { Typography } from "@mui/material";
+import { Delete, Visibility } from "@mui/icons-material";
+import { Typography, Modal, Box } from "@mui/material";
+import { useState } from "react";
 
 interface TransactionsTableProps {
   transactions: any[];
   isLoading: boolean;
   isError: boolean;
-  onEdit: (transaction: any) => void;
   onDelete: (id: number) => void;
 }
 
@@ -14,9 +14,12 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
   transactions,
   isLoading,
   isError,
-  onEdit,
   onDelete,
 }) => {
+  const [selectedTransaction, setSelectedTransaction] = useState<any | null>(
+    null
+  );
+
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 90 },
     { field: "name", headerName: "Название", width: 200 },
@@ -33,12 +36,12 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
       field: "actions",
       type: "actions",
       headerName: "Действия",
-      width: 200,
+      width: 250,
       getActions: ({ row }) => [
         <GridActionsCellItem
-          icon={<Edit />}
-          label="Редактировать"
-          onClick={() => onEdit(row)}
+          icon={<Visibility />}
+          label="Просмотр"
+          onClick={() => setSelectedTransaction(row)}
           color="primary"
         />,
         <GridActionsCellItem
@@ -50,6 +53,8 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
       ],
     },
   ];
+
+  const handleCloseModal = () => setSelectedTransaction(null);
 
   return (
     <div style={{ height: 400, width: "100%" }}>
@@ -72,8 +77,73 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
           disableRowSelectionOnClick
         />
       )}
+
+      {/* Модальное окно с подробной информацией о транзакции */}
+      <Modal open={Boolean(selectedTransaction)} onClose={handleCloseModal}>
+        <Box sx={modalStyle}>
+          {selectedTransaction && (
+            <>
+              <Typography variant="h6" gutterBottom>
+                Информация о транзакции
+              </Typography>
+              <Typography variant="body1">
+                <strong>ID:</strong> {selectedTransaction.id}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Название:</strong> {selectedTransaction.name}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Сумма:</strong> {selectedTransaction.amount} руб.
+              </Typography>
+              <Typography variant="body1">
+                <strong>Тип:</strong> {selectedTransaction.type}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Метод оплаты:</strong>{" "}
+                {selectedTransaction.paymentMethod}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Дата:</strong>{" "}
+                {new Date(selectedTransaction.date).toLocaleString()}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Клиент:</strong> {selectedTransaction.client?.fullName}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Телефон клиента:</strong>{" "}
+                {selectedTransaction.client?.phone}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Комментарий клиента:</strong>{" "}
+                {selectedTransaction.client?.comment}
+              </Typography>
+
+              <Typography variant="h6" sx={{ mt: 2 }}>
+                Продукты:
+              </Typography>
+              {selectedTransaction.TransactionProducts.map((product: any) => (
+                <Typography key={product.id} variant="body1">
+                  <strong>{product.product.name}</strong> (Цена: {product.price}{" "}
+                  руб., Количество: {product.quantity})
+                </Typography>
+              ))}
+            </>
+          )}
+        </Box>
+      </Modal>
     </div>
   );
+};
+
+const modalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 600,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
 };
 
 export default TransactionsTable;

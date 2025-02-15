@@ -89,10 +89,14 @@ const Payment = () => {
       <Typography variant="h4" gutterBottom>
         Транзакции
       </Typography>
-      <Button variant="contained" startIcon={<Add />} onClick={handleOpenAdd}>
+      <Divider />
+      <Button
+        variant="contained"
+        startIcon={<Add />}
+        onClick={handleOpenAdd}
+        sx={{ my: 2 }}  >
         Добавить транзакцию
       </Button>
-      <Divider sx={{ my: 2 }} />
       <TransactionsTable
         transactions={transactions}
         isLoading={isLoading}

@@ -43,6 +43,11 @@ const validationSchema = Yup.object({
   paymentMethod: Yup.string().required("Метод оплаты обязателен"),
   clientId: Yup.number().required("Выберите клиента"),
   date: Yup.string().required("Дата обязательна"),
+  amount: Yup.number().min(0, "Сумма не может быть отрицательной"),
+  additionalAmount: Yup.number().min(
+    0,
+    "Дополнительная сумма не может быть отрицательной"
+  ),
 });
 
 const formatDateToISOString = (date: Date) => {
@@ -70,10 +75,12 @@ const TransactionForm = ({
     handleSubmit,
     setValue,
     formState: { errors },
+    getValues,
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       date: formatDateToISOString(new Date()),
+      additionalAmount: 0,
     },
   });
 
@@ -84,14 +91,16 @@ const TransactionForm = ({
       setValue("paymentMethod", transaction.paymentMethod);
       setValue("clientId", transaction.clientId);
       setValue("date", formatDateToISOString(new Date(transaction.date)));
+      setValue("additionalAmount", transaction.additionalAmount || 0);
       setSelectedProducts(transaction.transactionProducts || []);
     }
   }, [transaction, setValue]);
 
-  const totalAmount = selectedProducts.reduce(
-    (sum, product) => sum + product.quantity * product.price,
-    0
-  );
+  const totalAmount =
+    selectedProducts.reduce(
+      (sum, product) => sum + product.quantity * product.price,
+      0
+    ) + (parseFloat(getValues("additionalAmount")?.toString() || "0") || 0);
 
   const handleAddProduct = () => {
     setSelectedProducts([
@@ -108,6 +117,7 @@ const TransactionForm = ({
       const product = products.find((p) => p.id === value);
       if (product) {
         updatedProducts[index].name = product.name;
+        updatedProducts[index].price = product.price;
       }
     }
     setSelectedProducts(updatedProducts);
@@ -118,8 +128,10 @@ const TransactionForm = ({
   };
 
   const onSubmit = async (data: any) => {
-    const transactionData = {
-      ...data,
+    const { additionalAmount, ...transactionData } = data;
+    console.log(additionalAmount);
+    const transactionDataWithProducts = {
+      ...transactionData,
       date: formatDateToISOString(new Date(data.date)),
       amount: totalAmount,
       transactionProducts: selectedProducts.map((product) => ({
@@ -131,11 +143,11 @@ const TransactionForm = ({
 
     try {
       if (isAdding) {
-        await createTransaction(transactionData).unwrap();
+        await createTransaction(transactionDataWithProducts).unwrap();
       } else {
         await updateTransaction({
           id: transaction.id,
-          ...transactionData,
+          ...transactionDataWithProducts,
         }).unwrap();
       }
       onClose();
@@ -147,12 +159,12 @@ const TransactionForm = ({
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={modalStyle}>
-        <Typography variant="h6">
+        <Typography variant="h6" gutterBottom>
           {isAdding ? "Добавление транзакции" : "Редактирование транзакции"}
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="name"
                 control={control}
@@ -168,7 +180,7 @@ const TransactionForm = ({
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="date"
                 control={control}
@@ -184,12 +196,16 @@ const TransactionForm = ({
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="type"
                 control={control}
                 render={({ field }) => (
-                  <Select {...field} fullWidth error={!!errors.type}>
+                  <Select
+                    {...field}
+                    fullWidth
+                    error={!!errors.type}
+                    displayEmpty>
                     <MenuItem value="purchase">Покупка</MenuItem>
                     <MenuItem value="sale">Продажа</MenuItem>
                   </Select>
@@ -197,12 +213,16 @@ const TransactionForm = ({
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="paymentMethod"
                 control={control}
                 render={({ field }) => (
-                  <Select {...field} fullWidth error={!!errors.paymentMethod}>
+                  <Select
+                    {...field}
+                    fullWidth
+                    error={!!errors.paymentMethod}
+                    displayEmpty>
                     <MenuItem value="cash">Наличные</MenuItem>
                     <MenuItem value="card">Карта</MenuItem>
                   </Select>
@@ -210,7 +230,7 @@ const TransactionForm = ({
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="clientId"
                 control={control}
@@ -235,12 +255,31 @@ const TransactionForm = ({
               />
             </Grid>
 
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name="additionalAmount"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Дополнительная сумма"
+                    fullWidth
+                    type="number"
+                    error={!!errors.additionalAmount}
+                    helperText={errors.additionalAmount?.message}
+                  />
+                )}
+              />
+            </Grid>
+
             <Grid item xs={12}>
-              <Typography variant="h6">Продукты</Typography>
+              <Typography variant="h6" gutterBottom>
+                Продукты
+              </Typography>
               <Button
                 onClick={handleAddProduct}
                 variant="outlined"
-                sx={{ mb: 1 }}>
+                sx={{ mb: 2 }}>
                 Добавить товар
               </Button>
               <TableContainer component={Paper}>
@@ -308,8 +347,15 @@ const TransactionForm = ({
                 </Table>
               </TableContainer>
             </Grid>
+
+            {/* Итоговая сумма */}
+            <Grid item xs={12} sm={6}>
+              <Typography variant="h6" sx={{ mt: 2 }}>
+                Итоговая сумма: {totalAmount.toFixed(2)} руб.
+              </Typography>
+            </Grid>
           </Grid>
-          <Button variant="contained" type="submit">
+          <Button variant="contained" type="submit" sx={{ mt: 2 }}>
             {isAdding ? "Добавить" : "Сохранить"}
           </Button>
         </form>
