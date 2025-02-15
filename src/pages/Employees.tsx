@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Typography, Button, Divider } from "@mui/material";
-import { PersonAdd } from "@mui/icons-material";
+import { Typography, Button, Divider, Box } from "@mui/material";
+import { PersonAdd, HowToReg } from "@mui/icons-material";
 import {
   useGetEmployeesQuery,
   useUpdateEmployeeMutation,
@@ -10,6 +10,7 @@ import {
 import ConfirmDialog from "../components/UI/ConfirmDialog";
 import EmployeesTable from "../components/Tables/EmployeesTable";
 import EmployeeForm from "../components/Forms/EmployeeForm";
+import RegisterEmployeeForm from "../components/Forms/RegisterEmployeeForm";
 
 const Employees = () => {
   const {
@@ -18,11 +19,13 @@ const Employees = () => {
     isError,
     refetch,
   } = useGetEmployeesQuery();
+
   const [updateEmployee] = useUpdateEmployeeMutation();
   const [deleteEmployee] = useDeleteEmployeeMutation();
   const [createEmployee] = useCreateEmployeeMutation();
 
   const [open, setOpen] = useState(false);
+  const [registerOpen, setRegisterOpen] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
@@ -40,6 +43,14 @@ const Employees = () => {
     setOpen(true);
   };
 
+  const handleOpenRegister = () => {
+    setRegisterOpen(true);
+  };
+
+  const handleCloseRegister = () => {
+    setRegisterOpen(false);
+  };
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -48,14 +59,17 @@ const Employees = () => {
     fullName: string;
     phone: string;
     status: string;
-    userId: number;  
-    locationId: number;  
+    userId: number;
+    locationId: number;
   }) => {
     try {
       if (isAdding) {
         await createEmployee(employeeData).unwrap();
       } else if (selectedEmployee) {
-        await updateEmployee({ id: selectedEmployee.id, ...employeeData }).unwrap();
+        await updateEmployee({
+          id: selectedEmployee.id,
+          ...employeeData,
+        }).unwrap();
       }
       handleClose();
       refetch();
@@ -63,7 +77,6 @@ const Employees = () => {
       console.error("Ошибка сохранения сотрудника:", error);
     }
   };
-  
 
   const handleDeleteClick = (id: number) => {
     setEmployeeToDelete(id);
@@ -90,14 +103,21 @@ const Employees = () => {
         Сотрудники
       </Typography>
       <Divider />
-      <Button
-        variant="contained"
-        startIcon={<PersonAdd />}
-        onClick={handleOpenAdd}
-        sx={{ my: 2 }}
-      >
-        Добавить сотрудника
-      </Button>
+      <Box sx={{ display: "flex", gap: 2, my: 2 }}>
+        <Button
+          variant="contained"
+          startIcon={<PersonAdd />}
+          onClick={handleOpenAdd}>
+          Добавить сотрудника
+        </Button>
+
+        <Button
+          variant="outlined"
+          startIcon={<HowToReg />}
+          onClick={handleOpenRegister}>
+          Зарегистрировать сотрудника
+        </Button>
+      </Box>
 
       <EmployeesTable
         employees={employees}
@@ -113,6 +133,12 @@ const Employees = () => {
         onSave={handleSaveEmployee}
         employee={selectedEmployee}
         isAdding={isAdding}
+      />
+
+      <RegisterEmployeeForm
+        open={registerOpen}
+        onClose={handleCloseRegister}
+        onSuccess={refetch}
       />
 
       <ConfirmDialog

@@ -14,6 +14,7 @@ import Clients from "../pages/Clients";
 import ProtectedRoute from "../components/ProtectedRoute";
 import Revenue from "../pages/Revenue";
 import ShiftTracking from "../pages/ShiftTracking";
+import Category from "../pages/Category";
 
 const AppRoutes = () => (
   <Routes>
@@ -38,6 +39,7 @@ const AppRoutes = () => (
               <Route path="client" element={<Clients />} />
               <Route path="payment" element={<Payment />} />
               <Route path="inventory" element={<Inventory />} />
+              <Route path="category" element={<Category />} />
               <Route path="revenue" element={<Revenue />} />
               <Route path="employees" element={<Employees />} />
               <Route path="notification" element={<Notifications />} />
@@ -60,6 +62,8 @@ const AppRoutes = () => (
               <Route path="client" element={<Clients />} />
               <Route path="payment" element={<Payment />} />
               <Route path="inventory" element={<Inventory />} />
+              <Route path="category" element={<Category />} />
+              <Route path="category" element={<Category />} />
               <Route path="revenue" element={<Revenue />} />
               <Route path="employees" element={<Employees />} />
               <Route path="notification" element={<Notifications />} />

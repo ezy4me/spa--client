@@ -1,6 +1,6 @@
 import { Button, Typography, CircularProgress, Divider } from "@mui/material";
 import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
-import { Stop } from "@mui/icons-material"; 
+import { Stop } from "@mui/icons-material";
 import {
   useCreateShiftMutation,
   useGetShiftsByUserIdQuery,
@@ -42,6 +42,18 @@ const ShiftTracking = () => {
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 90 },
+    {
+      field: "name",
+      headerName: "Работник",
+      width: 180,
+      valueGetter: (_, row) => row.employee.fullName,
+    },
+    {
+      field: "location",
+      headerName: "Адрес",
+      width: 180,
+      valueGetter: (_, row) => row.employee.location.name,
+    },
     {
       field: "startTime",
       headerName: "Начало смены",

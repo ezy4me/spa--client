@@ -49,7 +49,6 @@ const Revenue: React.FC = () => {
     error: errorLowStock,
   } = useGetLowStockProductsQuery();
 
-  // Check if data is loading or there is an error
   if (
     isLoadingTotalRevenue ||
     isLoadingRevenueByProduct ||
@@ -60,7 +59,6 @@ const Revenue: React.FC = () => {
     return (
       <div className="loading-screen">
         <CircularProgress />
-        <Typography variant="h6">Загрузка...</Typography>
       </div>
     );
   }
@@ -78,7 +76,6 @@ const Revenue: React.FC = () => {
   return (
     <div className="p-4">
       <Grid container spacing={4}>
-        {/* Total Revenue Card */}
         <Grid item xs={12} sm={6} md={3}>
           <Paper elevation={3} sx={{ padding: 2 }}>
             <Card
@@ -107,7 +104,6 @@ const Revenue: React.FC = () => {
           </Paper>
         </Grid>
 
-        {/* Revenue by Product Card */}
         <Grid item xs={12} sm={6} md={3}>
           <Paper elevation={3} sx={{ padding: 2 }}>
             <Card sx={{ minHeight: 200 }}>
@@ -136,7 +132,6 @@ const Revenue: React.FC = () => {
           </Paper>
         </Grid>
 
-        {/* Revenue by Category Card */}
         <Grid item xs={12} sm={6} md={3}>
           <Paper elevation={3} sx={{ padding: 2 }}>
             <Card sx={{ minHeight: 200 }}>
@@ -165,7 +160,6 @@ const Revenue: React.FC = () => {
           </Paper>
         </Grid>
 
-        {/* Active Clients Card */}
         <Grid item xs={12} sm={6} md={3}>
           <Paper elevation={3} sx={{ padding: 2 }}>
             <Card sx={{ minHeight: 200 }}>
@@ -195,7 +189,6 @@ const Revenue: React.FC = () => {
           </Paper>
         </Grid>
 
-        {/* Low Stock Products Card */}
         <Grid item xs={12} sm={6} md={3}>
           <Paper elevation={3} sx={{ padding: 2 }}>
             <Card sx={{ minHeight: 200 }}>

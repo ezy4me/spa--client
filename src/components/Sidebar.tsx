@@ -11,6 +11,7 @@ import {
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PaymentIcon from "@mui/icons-material/Payment";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import CategoryIcon from "@mui/icons-material/Category";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import BookIcon from "@mui/icons-material/Book";
 import PersonIcon from "@mui/icons-material/Person";
@@ -63,6 +64,11 @@ const Sidebar: React.FC = () => {
       text: "Склад",
       path: `/${userRole?.toLowerCase()}/inventory`,
       icon: <InventoryIcon />,
+    },
+    {
+      text: "Категории товаров",
+      path: `/${userRole?.toLowerCase()}/category`,
+      icon: <CategoryIcon />,
     },
     {
       text: "Выручка",

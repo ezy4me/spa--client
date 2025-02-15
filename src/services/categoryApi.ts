@@ -13,7 +13,7 @@ export const categoryApi = api.injectEndpoints({
     updateCategory: builder.mutation<Category, Partial<Category> & { id: number }>({
       query: ({ id, ...data }) => ({
         url: `category/${id}`,
-        method: "PATCH",
+        method: "PUT",
         body: data,
       }),
     }),
