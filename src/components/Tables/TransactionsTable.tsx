@@ -78,7 +78,6 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
         />
       )}
 
-      {/* Модальное окно с подробной информацией о транзакции */}
       <Modal open={Boolean(selectedTransaction)} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
           {selectedTransaction && (

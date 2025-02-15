@@ -39,58 +39,78 @@ const Sidebar: React.FC = () => {
     navigate("/");
   };
 
-  const menuItems = [
+  const allMenuItems = [
     {
       text: "Главная",
-      path: `/${userRole?.toLowerCase()}/dashboard`,
+      path: "dashboard",
       icon: <DashboardIcon />,
+      roles: ["admin", "manager"],
     },
     {
       text: "Бронирование",
-      path: `/${userRole?.toLowerCase()}/booking`,
+      path: "booking",
       icon: <BookIcon />,
+      roles: ["admin", "manager"],
     },
     {
       text: "Клиенты",
-      path: `/${userRole?.toLowerCase()}/client`,
+      path: "client",
       icon: <PersonIcon />,
+      roles: ["admin", "manager"],
     },
     {
       text: "Оплата",
-      path: `/${userRole?.toLowerCase()}/payment`,
+      path: "payment",
       icon: <PaymentIcon />,
+      roles: ["admin", "manager"],
     },
     {
       text: "Склад",
-      path: `/${userRole?.toLowerCase()}/inventory`,
+      path: "inventory",
       icon: <InventoryIcon />,
+      roles: ["admin", "manager"],
     },
     {
       text: "Категории товаров",
-      path: `/${userRole?.toLowerCase()}/category`,
+      path: "category",
       icon: <CategoryIcon />,
+      roles: ["admin", "manager"],
     },
     {
       text: "Выручка",
-      path: `/${userRole?.toLowerCase()}/revenue`,
+      path: "revenue",
       icon: <MonetizationOnIcon />,
+      roles: ["manager"],
     },
     {
       text: "Сотрудники",
-      path: `/${userRole?.toLowerCase()}/employees`,
+      path: "employees",
       icon: <PeopleIcon />,
+      roles: ["manager"],
     },
     {
       text: "Уведомления",
-      path: `/${userRole?.toLowerCase()}/notification`,
+      path: "notification",
       icon: <NotificationsIcon />,
+      roles: ["admin", "manager"],
     },
     {
       text: "Смены",
-      path: `/${userRole?.toLowerCase()}/shift`,
+      path: "shift",
       icon: <AccessTimeIcon />,
+      roles: ["admin", "manager"],
     },
   ];
+
+  const normalizedRole = userRole ? userRole.toLowerCase() : "";
+
+  const menuItems = allMenuItems
+    .filter((item) => item.roles.includes(normalizedRole))
+    .map(({ text, path, icon }) => ({
+      text,
+      path: `/${normalizedRole}/${path}`,
+      icon,
+    }));
 
   return (
     <Drawer

@@ -32,12 +32,6 @@ const Payment = () => {
     null
   );
 
-  const handleOpenEdit = (transaction: any) => {
-    setSelectedTransaction(transaction);
-    setIsAdding(false);
-    setOpen(true);
-  };
-
   const handleOpenAdd = () => {
     setSelectedTransaction(null);
     setIsAdding(true);
@@ -101,7 +95,6 @@ const Payment = () => {
         transactions={transactions}
         isLoading={isLoading}
         isError={isError}
-        onEdit={handleOpenEdit}
         onDelete={handleDeleteClick}
       />
       <TransactionForm

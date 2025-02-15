@@ -40,9 +40,9 @@ const AppRoutes = () => (
               <Route path="payment" element={<Payment />} />
               <Route path="inventory" element={<Inventory />} />
               <Route path="category" element={<Category />} />
-              <Route path="revenue" element={<Revenue />} />
-              <Route path="employees" element={<Employees />} />
-              <Route path="notification" element={<Notifications />} />
+              {/* <Route path="revenue" element={<Revenue />} /> */}
+              {/* <Route path="employees" element={<Employees />} /> */}
+              {/* <Route path="notification" element={<Notifications />} /> */}
               <Route path="shift" element={<ShiftTracking />} />
             </Routes>
           </AdminLayout>
