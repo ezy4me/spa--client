@@ -152,7 +152,6 @@ const EmployeeForm = ({
               />
             </Grid>
 
-            {/* Поле выбора пользователя */}
             <Grid item xs={12}>
               {isUsersLoading ? (
                 <CircularProgress size={24} />
@@ -186,7 +185,6 @@ const EmployeeForm = ({
               )}
             </Grid>
 
-            {/* Поле выбора локации */}
             <Grid item xs={12}>
               {isLocationsLoading ? (
                 <CircularProgress size={24} />

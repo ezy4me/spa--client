@@ -82,7 +82,7 @@ const ShiftTracking = () => {
             <GridActionsCellItem
               icon={<Stop />}
               label="Завершить смену"
-              onClick={() => handleEndShift(row.id, row.startTime)} // передаем startTime
+              onClick={() => handleEndShift(row.id, row.startTime)} 
               color="secondary"
             />,
           ];

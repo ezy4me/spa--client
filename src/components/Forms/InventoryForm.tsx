@@ -146,7 +146,6 @@ const InventoryForm = ({
               />
             </Grid>
 
-            {/* Выпадающий список для категорий */}
             <Grid item xs={12}>
               <FormControl fullWidth error={!!errors.categoryId}>
                 <InputLabel>Категория</InputLabel>
@@ -171,7 +170,6 @@ const InventoryForm = ({
               </FormControl>
             </Grid>
 
-            {/* Выпадающий список для локаций */}
             <Grid item xs={12}>
               <FormControl fullWidth error={!!errors.locationId}>
                 <InputLabel>Локация</InputLabel>

@@ -1,4 +1,3 @@
-// src/layouts/AuthLayout/AuthLayout.jsx
 import React, { ReactNode } from "react";
 import { Box } from "@mui/material";
 

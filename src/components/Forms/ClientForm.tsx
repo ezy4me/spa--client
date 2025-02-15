@@ -7,16 +7,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 interface ClientFormProps {
   open: boolean;
   onClose: () => void;
-  onSave: (clientData: { fullName: string; phone: string; comment: string }) => void; // comment теперь обязательно
-  client?: { fullName: string; phone: string; comment: string }; // comment теперь обязательно
-  isAdding: boolean;
+  onSave: (clientData: { fullName: string; phone: string; comment: string }) => void;
+  client?: { fullName: string; phone: string; comment: string }; 
+    isAdding: boolean;
 }
 
-// Валидация с использованием Yup
 const validationSchema = Yup.object({
   fullName: Yup.string().required("ФИО обязательно"),
   phone: Yup.string().required("Телефон обязателен").matches(/^\+?[0-9]{10,15}$/, "Неверный формат телефона"),
-  comment: Yup.string().required("Комментарий обязателен"), // comment теперь обязательно
+  comment: Yup.string().required("Комментарий обязателен"), 
 });
 
 const ClientForm = ({ open, onClose, onSave, client, isAdding }: ClientFormProps) => {
@@ -33,12 +32,12 @@ const ClientForm = ({ open, onClose, onSave, client, isAdding }: ClientFormProps
     if (client) {
       setValue("fullName", client.fullName);
       setValue("phone", client.phone);
-      setValue("comment", client.comment || ""); // Устанавливаем значение или пустую строку
+      setValue("comment", client.comment || ""); 
     }
   }, [client, setValue]);
 
   const onSubmit = (data: { fullName: string; phone: string; comment: string }) => {
-    onSave(data); // Передаем данные с обязательным комментарием
+    onSave(data); 
   };
 
   return (

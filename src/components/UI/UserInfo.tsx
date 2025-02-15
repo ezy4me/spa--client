@@ -25,12 +25,6 @@ const UserInfo: React.FC = () => {
           <Typography variant="body2" sx={{ marginRight: 2 }}>
             {employee.fullName}
           </Typography>
-          {/* <Tooltip title="Профиль">
-            <Avatar
-              alt={employee.fullName}
-              src={`https://i.pravatar.cc/300?img=${employee.id}`}
-            />
-          </Tooltip> */}
         </>
       )}
     </Box>

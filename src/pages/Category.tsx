@@ -16,7 +16,7 @@ const Category = () => {
     data: categories = [],
     isLoading,
     isError,
-    refetch, // добавлен refetch
+    refetch, 
   } = useGetCategoriesQuery();
   const [createCategory] = useCreateCategoryMutation();
   const [updateCategory] = useUpdateCategoryMutation();
@@ -49,7 +49,7 @@ const Category = () => {
         }).unwrap();
       }
       handleCloseCategoryForm();
-      refetch(); // Перезагружаем список категорий после изменения
+      refetch(); 
     } catch (error) {
       console.error("Ошибка сохранения категории:", error);
     }
@@ -59,19 +59,19 @@ const Category = () => {
     if (categoryToDelete !== null) {
       try {
         await deleteCategory(categoryToDelete).unwrap();
-        refetch(); // Перезагружаем список категорий после удаления
+        refetch(); 
       } catch (error) {
         console.error("Ошибка удаления категории:", error);
       } finally {
-        setConfirmOpen(false); // Закрытие диалога
+        setConfirmOpen(false);
         setCategoryToDelete(null);
       }
     }
   };
 
   const handleDeleteClick = (id: number) => {
-    setCategoryToDelete(id); // Устанавливаем категорию для удаления
-    setConfirmOpen(true); // Открываем диалог
+    setCategoryToDelete(id); 
+    setConfirmOpen(true); 
   };
 
   return (
