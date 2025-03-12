@@ -91,7 +91,7 @@ const Category = () => {
       <CategoryTable
         categories={categories}
         onEdit={handleOpenCategoryForm}
-        onDelete={handleDeleteClick} 
+        onDelete={handleDeleteClick}      
         isLoading={isLoading}
         isError={isError}
       />

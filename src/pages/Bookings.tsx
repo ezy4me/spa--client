@@ -1,174 +1,154 @@
 import { useState } from "react";
-import { Typography, Modal, Box, Grid } from "@mui/material";
-import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
-import { CheckCircleOutline, CancelOutlined, InfoOutlined } from "@mui/icons-material";
-import { useGetBookingsQuery, useUpdateBookingMutation } from "../services/bookingsApi";
+import { Typography, Button, Divider } from "@mui/material";
+import { Add } from "@mui/icons-material";
+import {
+  useGetBookingsQuery,
+  useUpdateBookingMutation,
+  useDeleteBookingMutation,
+  useCreateBookingMutation,
+} from "../services/bookingsApi";
+
 import ConfirmDialog from "../components/UI/ConfirmDialog";
+import BookingsTable from "../components/Tables/BookingsTable";
+import BookingForm from "../components/Forms/BookingForm";
+import { useGetClientsQuery } from "../services/clientsApi";
+import { useGetRoomsQuery } from "../services/roomApi";
 
 const Bookings = () => {
-  const { data: bookings = [], isLoading, isError } = useGetBookingsQuery();
+  const {
+    data: bookings = [],
+    isLoading: bookingsLoading,
+    isError: bookingsError,
+    refetch: refetchBookings,
+  } = useGetBookingsQuery();
+
   const [updateBooking] = useUpdateBookingMutation();
-  
+  const [deleteBooking] = useDeleteBookingMutation();
+  const [createBooking] = useCreateBookingMutation();
+
+  const {
+    data: rooms = [],
+    isLoading: roomsLoading,
+  } = useGetRoomsQuery();
+
+  const {
+    data: clients = [],
+    isLoading: clientsLoading,
+  } = useGetClientsQuery();
+
   const [open, setOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
-  const [statusToUpdate, setStatusToUpdate] = useState<string | null>(null);
+  const [bookingToDelete, setBookingToDelete] = useState<number | null>(null);
 
-  const handleOpen = (booking: any) => {
+  const handleOpenEdit = (booking: any) => {
     setSelectedBooking(booking);
+    setIsAdding(false);
+    setOpen(true);
+  };
+
+  const handleOpenAdd = () => {
+    setSelectedBooking(null);
+    setIsAdding(true);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setSelectedBooking(null);
   };
 
-  const handleStatusChange = (booking: any, status: string) => {
-    setSelectedBooking(booking);
-    setStatusToUpdate(status);
-    setConfirmOpen(true);
-  };
+  const handleSaveBooking = async (bookingData: any) => {
+    try {
+      const formattedData = {
+        startTime: new Date(bookingData.startTime).toISOString(),
+        endTime: new Date(bookingData.endTime).toISOString(),
+        comment: bookingData.comment,
+        status: bookingData.status,
+        roomId: Number(bookingData.roomId),
+        clientId: Number(bookingData.clientId),
+      };
 
-  const handleConfirmStatusUpdate = async () => {
-    if (selectedBooking && statusToUpdate) {
-      try {
-        await updateBooking({ id: selectedBooking.id, status: statusToUpdate }).unwrap();
-      } catch (error) {
-        console.error("Ошибка обновления статуса бронирования:", error);
-      } finally {
-        setConfirmOpen(false);
-        setSelectedBooking(null);
-        setStatusToUpdate(null);
+      if (isAdding) {
+        await createBooking(formattedData).unwrap();
+      } else if (selectedBooking) {
+        await updateBooking({
+          id: selectedBooking.id,
+          ...formattedData,
+        }).unwrap();
       }
+
+      handleClose();
+      refetchBookings();
+    } catch (error) {
+      console.error("Ошибка сохранения бронирования:", error);
     }
   };
 
-  const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 90 },
-    { 
-      field: "startTime", 
-      headerName: "Дата начала", 
-      width: 180,
-      valueGetter: (_, row) => new Date(row.startTime).toLocaleString(),
-    },
-    { 
-      field: "endTime", 
-      headerName: "Дата конца", 
-      width: 180,
-      valueGetter: (_, row) => new Date(row.endTime).toLocaleString(),
-    },
-    { field: "status", headerName: "Статус", width: 150 },
-    { field: "comment", headerName: "Комментарий", width: 250 },
-    {
-      field: "actions",
-      type: "actions",
-      headerName: "Действия",
-      width: 200,
-      getActions: ({ row }) => [
-        <GridActionsCellItem
-          icon={<CheckCircleOutline color="success" />}
-          label="Подтвердить"
-          onClick={() => handleStatusChange(row, "confirmed")}
-        />,
-        <GridActionsCellItem
-          icon={<CancelOutlined color="error" />}
-          label="Отменить"
-          onClick={() => handleStatusChange(row, "canceled")}
-        />,
-        <GridActionsCellItem
-          icon={<InfoOutlined />}
-          label="Подробнее"
-          onClick={() => handleOpen(row)}
-        />,
-      ],
-    },
-  ];
+  const handleDeleteClick = (id: number) => {
+    setBookingToDelete(id);
+    setConfirmOpen(true);
+  };
 
-  if (isLoading) return <Typography>Загрузка...</Typography>;
-  if (isError) return <Typography>Ошибка при загрузке данных.</Typography>;
+  const handleConfirmDelete = async () => {
+    if (bookingToDelete !== null) {
+      try {
+        await deleteBooking({ id: bookingToDelete }).unwrap();
+        refetchBookings();
+      } catch (error) {
+        console.error("Ошибка удаления бронирования:", error);
+      } finally {
+        setConfirmOpen(false);
+        setBookingToDelete(null);
+      }
+    }
+  };
 
   return (
     <div style={{ padding: 20 }}>
       <Typography variant="h4" gutterBottom>
         Бронирования
       </Typography>
+      <Divider />
+      <Button
+        variant="contained"
+        startIcon={<Add />}
+        onClick={handleOpenAdd}
+        sx={{ my: 2 }}
+        disabled={roomsLoading || clientsLoading}
+      >
+        Добавить бронирование
+      </Button>
 
-      <DataGrid
-        rows={bookings}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 20,
-            },
-          },
-        }}
-        pageSizeOptions={[20]}
-        disableRowSelectionOnClick
-        getRowId={(row) => row.id}
+      <BookingsTable
+        bookings={bookings}
+        onEdit={handleOpenEdit}
+        onDelete={handleDeleteClick}
+        isLoading={bookingsLoading}
+        isError={bookingsError}
       />
 
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-title" aria-describedby="modal-description">
-        <Box sx={modalStyle}>
-          <Typography id="modal-title" variant="h6" component="h2">
-            Детали бронирования
-          </Typography>
-          <Box id="modal-description" sx={{ mt: 2 }}>
-            {selectedBooking ? (
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Typography variant="body1">
-                    <strong>Комментарий:</strong> {selectedBooking.comment}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1">
-                    <strong>Статус:</strong> {selectedBooking.status}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1">
-                    <strong>Начало:</strong> {new Date(selectedBooking.startTime).toLocaleString()}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1">
-                    <strong>Конец:</strong> {new Date(selectedBooking.endTime).toLocaleString()}
-                  </Typography>
-                </Grid>
-              </Grid>
-            ) : (
-              <Typography>Данные о бронировании отсутствуют.</Typography>
-            )}
-          </Box>
-        </Box>
-      </Modal>
+      <BookingForm
+        open={open}
+        onClose={handleClose}
+        onSave={handleSaveBooking}
+        booking={selectedBooking}
+        isAdding={isAdding}
+        rooms={rooms}
+        clients={clients}
+      />
 
       <ConfirmDialog
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
-        onConfirm={handleConfirmStatusUpdate}
-        title="Изменение статуса"
-        message={`Вы уверены, что хотите изменить статус на "${statusToUpdate}"?`}
-        confirmText="Подтвердить"
+        onConfirm={handleConfirmDelete}
+        title="Удаление бронирования"
+        message="Вы уверены, что хотите удалить это бронирование? Это действие необратимо."
+        confirmText="Удалить"
         cancelText="Отмена"
       />
     </div>
   );
-};
-
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 500,
-  maxHeight: 600,
-  overflowY: "auto",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
 };
 
 export default Bookings;

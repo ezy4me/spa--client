@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, Typography, Grid, Paper } from "@mui/material";
+import { Card, CardContent, Typography, Grid, Paper, Box } from "@mui/material";
 import { useGetDashboardStatsQuery } from "../../services/dashboardApi";
 
 const Dashboard: React.FC = () => {
@@ -9,10 +9,10 @@ const Dashboard: React.FC = () => {
   if (error || !data) return <div>Ошибка при загрузке данных</div>;
 
   return (
-    <div className="p-4">
+    <Box sx={{ padding: 2 }}>
       <Grid container spacing={4}>
         <Grid item xs={12} sm={6} md={3}>
-          <Paper elevation={3} >
+          <Paper elevation={3}>
             <Card sx={{ minHeight: 200 }}>
               <CardContent>
                 <Typography variant="h6" color="textSecondary" gutterBottom>
@@ -77,7 +77,7 @@ const Dashboard: React.FC = () => {
           </Paper>
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 };
 

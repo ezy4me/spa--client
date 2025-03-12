@@ -109,9 +109,6 @@ const LoginForm: React.FC = () => {
         {isLoading ? "Вход..." : "Войти"}
       </Button>
 
-      <Typography variant="body2" color="textSecondary" align="center">
-        Забыли пароль? <a href="/forgot-password">Восстановить</a>
-      </Typography>
     </Box>
   );
 };

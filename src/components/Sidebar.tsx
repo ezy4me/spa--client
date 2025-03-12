@@ -7,7 +7,9 @@ import {
   ListItemText,
   Toolbar,
   Divider,
+  IconButton,
 } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PaymentIcon from "@mui/icons-material/Payment";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -16,7 +18,6 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import BookIcon from "@mui/icons-material/Book";
 import PersonIcon from "@mui/icons-material/Person";
 import PeopleIcon from "@mui/icons-material/People";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
@@ -27,9 +28,10 @@ import { logout } from "../store/slice/authSlice";
 import { RootState } from "../store/store";
 
 const drawerWidth = 240;
+const collapsedWidth = 60;
 
 const Sidebar: React.FC = () => {
-  const { isOpen } = useSidebar();
+  const { isOpen, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userRole = useSelector((state: RootState) => state.auth.user?.role);
@@ -89,12 +91,6 @@ const Sidebar: React.FC = () => {
       roles: ["manager"],
     },
     {
-      text: "Уведомления",
-      path: "notification",
-      icon: <NotificationsIcon />,
-      roles: ["admin", "manager"],
-    },
-    {
       text: "Смены",
       path: "shift",
       icon: <AccessTimeIcon />,
@@ -115,41 +111,64 @@ const Sidebar: React.FC = () => {
   return (
     <Drawer
       variant="permanent"
-      open={isOpen}
       sx={{
-        width: isOpen ? drawerWidth : 0,
+        width: isOpen ? drawerWidth : collapsedWidth,
         flexShrink: 0,
+        overflow: "hidden",
         "& .MuiDrawer-paper": {
-          width: isOpen ? drawerWidth : 0,
+          width: isOpen ? drawerWidth : collapsedWidth,
           transition: "width 0.3s ease-in-out",
-          overflowX: "hidden",
+          overflow: "hidden",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
         },
       }}>
-      <Toolbar />
+      <Toolbar sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <IconButton onClick={toggleSidebar}>
+          <MenuIcon />
+        </IconButton>
+      </Toolbar>
 
       <List sx={{ flexGrow: 1, padding: 0 }}>
         {menuItems.map(({ text, path, icon }) => (
           <ListItemButton
-            sx={{ paddingY: 1.5 }}
+            sx={{
+              paddingY: 1.5,
+              justifyContent: isOpen ? "initial" : "center",
+              whiteSpace: "nowrap",
+            }}
             key={path}
             component={Link}
             to={path}>
-            <ListItemIcon>{icon}</ListItemIcon>
-            <ListItemText primary={text} />
+            <ListItemIcon
+              sx={{
+                minWidth: 36,
+                justifyContent: !isOpen ? "center" : "inherit",
+              }}>
+              {icon}
+            </ListItemIcon>
+            {isOpen && <ListItemText primary={text} />}
           </ListItemButton>
         ))}
       </List>
 
       <Divider />
       <List>
-        <ListItemButton onClick={handleLogout} sx={{ paddingY: 1.5 }}>
-          <ListItemIcon>
+        <ListItemButton
+          onClick={handleLogout}
+          sx={{
+            paddingY: 1.5,
+            justifyContent: isOpen ? "initial" : "center",
+            whiteSpace: "nowrap",
+          }}>
+          <ListItemIcon
+            sx={{
+              justifyContent: !isOpen ? "center" : "inherit",
+            }}>
             <ExitToAppIcon color="error" />
           </ListItemIcon>
-          <ListItemText primary="Выход" />
+          {isOpen && <ListItemText primary="Выход" />}
         </ListItemButton>
       </List>
     </Drawer>

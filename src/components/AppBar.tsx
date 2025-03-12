@@ -17,12 +17,11 @@ const AppBar: React.FC = () => {
     <MuiAppBar position="fixed" sx={{ zIndex: 1201 }}>
       <Toolbar>
         <IconButton
-          sx={{ marginRight: 1 }}
+          sx={{ marginRight: 1, padding: .5 }}
           edge="start"
           color="inherit"
           aria-label="menu"
-          onClick={toggleSidebar}
-        >
+          onClick={toggleSidebar}>
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" noWrap>
@@ -30,7 +29,7 @@ const AppBar: React.FC = () => {
         </Typography>
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <UserInfo /> 
+          <UserInfo />
         </Box>
       </Toolbar>
     </MuiAppBar>

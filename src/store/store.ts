@@ -5,6 +5,7 @@ import { bookingsApi } from "../services/bookingsApi";
 import { clientsApi } from "../services/clientsApi";
 import authReducer from "./slice/authSlice";
 import { usersApi } from "../services/usersApi";
+import { roomApi } from "../services/roomApi";
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     bookings: bookingsApi.reducer,
     clientsApi: clientsApi.reducer,
     usersApi: usersApi.reducer,
+    roomApi: roomApi.reducer,
     auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
