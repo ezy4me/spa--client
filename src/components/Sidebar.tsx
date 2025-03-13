@@ -21,6 +21,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import SpaIcon from "@mui/icons-material/Spa";
+import LocationOnIcon from "@mui/icons-material/LocationOn";  
 
 import { Link, useNavigate } from "react-router-dom";
 import { useSidebar } from "../contexts/SidebarContext";
@@ -59,6 +60,12 @@ const Sidebar: React.FC = () => {
       text: "Номера",
       path: "room",
       icon: <SpaIcon />,
+      roles: ["admin", "manager"],
+    },
+    {
+      text: "Филиалы",
+      path: "location",
+      icon: <LocationOnIcon />,
       roles: ["admin", "manager"],
     },
     {

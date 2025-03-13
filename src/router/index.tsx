@@ -16,6 +16,7 @@ import Revenue from "../pages/Revenue";
 import ShiftTracking from "../pages/ShiftTracking";
 import Category from "../pages/Category";
 import Rooms from "../pages/Rooms";
+import Location from "../pages/Location";
 
 const AppRoutes = () => (
   <Routes>
@@ -42,7 +43,7 @@ const AppRoutes = () => (
               <Route path="inventory" element={<Inventory />} />
               <Route path="category" element={<Category />} />
               <Route path="room" element={<Rooms />} />
-              {/* <Route path="location" element={<Locations />} /> */}
+              <Route path="location" element={<Location />} />
               <Route path="shift" element={<ShiftTracking />} />
             </Routes>
           </AdminLayout>
