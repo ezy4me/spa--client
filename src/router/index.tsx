@@ -15,6 +15,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import Revenue from "../pages/Revenue";
 import ShiftTracking from "../pages/ShiftTracking";
 import Category from "../pages/Category";
+import Rooms from "../pages/Rooms";
 
 const AppRoutes = () => (
   <Routes>
@@ -40,6 +41,8 @@ const AppRoutes = () => (
               <Route path="payment" element={<Payment />} />
               <Route path="inventory" element={<Inventory />} />
               <Route path="category" element={<Category />} />
+              <Route path="room" element={<Rooms />} />
+              {/* <Route path="location" element={<Locations />} /> */}
               <Route path="shift" element={<ShiftTracking />} />
             </Routes>
           </AdminLayout>

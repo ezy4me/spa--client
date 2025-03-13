@@ -32,7 +32,10 @@ export const roomApi = api.injectEndpoints({
         method: "DELETE",
       }),
     }),
-    createRoom: builder.mutation<Room, Omit<Room, "id">>({
+    createRoom: builder.mutation<
+      Room,
+      Omit<Room, "id" | "location" > & { locationId: number }
+    >({
       query: (data) => ({
         url: `room`,
         method: "POST",
