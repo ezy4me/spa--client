@@ -60,6 +60,8 @@ const AppRoutes = () => (
               <Route path="" element={<Navigate to="dashboard" replace />} />
               <Route path="dashboard" element={<ManagerDashboard />} />
               <Route path="booking" element={<Bookings />} />
+              <Route path="room" element={<Rooms />} />
+              <Route path="location" element={<Location />} />
               <Route path="client" element={<Clients />} />
               <Route path="payment" element={<Payment />} />
               <Route path="inventory" element={<Inventory />} />

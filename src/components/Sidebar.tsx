@@ -108,7 +108,7 @@ const Sidebar: React.FC = () => {
       text: "Смены",
       path: "shift",
       icon: <AccessTimeIcon />,
-      roles: ["admin", "manager"],
+      roles: ["admin"],
     },
   ];
 

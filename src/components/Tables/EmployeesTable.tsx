@@ -1,11 +1,12 @@
 import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
-import { Edit, Delete } from "@mui/icons-material";
+import { Edit, Delete, Schedule } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 
 const EmployeesTable: React.FC<any> = ({
   employees,
   onEdit,
   onDelete,
+  onViewShifts, // Новая функция для просмотра смен
   isLoading,
   isError,
 }) => {
@@ -18,7 +19,7 @@ const EmployeesTable: React.FC<any> = ({
       field: "actions",
       type: "actions",
       headerName: "Действия",
-      width: 200,
+      width: 250,
       getActions: ({ row }) => [
         <GridActionsCellItem
           icon={<Edit />}
@@ -32,12 +33,18 @@ const EmployeesTable: React.FC<any> = ({
           onClick={() => onDelete(row.id)}
           color="error"
         />,
+        <GridActionsCellItem
+          icon={<Schedule />} // Иконка расписания
+          label="Просмотр смен"
+          onClick={() => onViewShifts(row.id)}
+          color="info"
+        />,
       ],
     },
   ];
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <div style={{ height: '100%', width: "100%" }}>
       {isLoading ? (
         <Typography>Загрузка...</Typography>
       ) : isError ? (

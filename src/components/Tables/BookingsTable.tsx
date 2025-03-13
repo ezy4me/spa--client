@@ -56,7 +56,7 @@ const BookingsTable: React.FC<BookingsTableProps> = ({
   ];
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <div style={{ height: '100%', width: "100%" }}>
       {isLoading ? (
         <Typography>Загрузка...</Typography>
       ) : isError ? (

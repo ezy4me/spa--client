@@ -11,6 +11,8 @@ import ConfirmDialog from "../components/UI/ConfirmDialog";
 import EmployeesTable from "../components/Tables/EmployeesTable";
 import EmployeeForm from "../components/Forms/EmployeeForm";
 import RegisterEmployeeForm from "../components/Forms/RegisterEmployeeForm";
+import ShiftListModal from "../components/Modals/ShiftListModal";
+
 
 const Employees = () => {
   const {
@@ -30,6 +32,8 @@ const Employees = () => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
   const [employeeToDelete, setEmployeeToDelete] = useState<number | null>(null);
+  const [shiftModalOpen, setShiftModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   const handleOpenEdit = (employee: any) => {
     setSelectedEmployee(employee);
@@ -97,6 +101,11 @@ const Employees = () => {
     }
   };
 
+  const handleViewShifts = (userId: number) => {
+    setSelectedUserId(userId);
+    setShiftModalOpen(true);
+  };
+
   return (
     <div style={{ padding: 20 }}>
       <Typography variant="h4" gutterBottom>
@@ -123,6 +132,7 @@ const Employees = () => {
         employees={employees}
         onEdit={handleOpenEdit}
         onDelete={handleDeleteClick}
+        onViewShifts={handleViewShifts} // Передача функции
         isLoading={isLoading}
         isError={isError}
       />
@@ -139,6 +149,12 @@ const Employees = () => {
         open={registerOpen}
         onClose={handleCloseRegister}
         onSuccess={refetch}
+      />
+
+      <ShiftListModal
+        open={shiftModalOpen}
+        onClose={() => setShiftModalOpen(false)}
+        userId={selectedUserId}
       />
 
       <ConfirmDialog
