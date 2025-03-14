@@ -80,7 +80,7 @@ const Locations = () => {
   return (
     <div style={{ padding: 20 }}>
       <Typography variant="h4" gutterBottom>
-        Управление локациями
+        Управление филиалами
       </Typography>
       <Divider />
       <Button

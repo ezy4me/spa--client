@@ -6,10 +6,26 @@ interface Location {
   address: string;
 }
 
+interface User {
+  username: string;
+  role: string;
+}
+
+interface Employee {
+  fullName: string;
+  phone: string;
+  status: string;
+  locationId: number;
+  user: User;
+}
+
 export const locationApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getLocations: builder.query<Location[], void>({
       query: () => "location",
+    }),
+    getEmployeesByLocationId: builder.query<Employee[], number>({
+      query: (locationId) => `location/${locationId}/employees`,
     }),
     updateLocation: builder.mutation<
       Location,
@@ -39,6 +55,7 @@ export const locationApi = api.injectEndpoints({
 
 export const {
   useGetLocationsQuery,
+  useGetEmployeesByLocationIdQuery,
   useUpdateLocationMutation,
   useDeleteLocationMutation,
   useCreateLocationMutation,
