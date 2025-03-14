@@ -59,6 +59,14 @@ export const transactionsApi = api.injectEndpoints({
         method: "DELETE",
       }),
     }),
+
+    generateTransactionReport: builder.mutation<void, number>({
+      query: (transactionId) => ({
+        url: `transaction/${transactionId}/report`,
+        method: "GET",
+        responseHandler: (response) => response.blob(),
+      }),
+    }),
   }),
 });
 
@@ -67,4 +75,5 @@ export const {
   useCreateTransactionMutation,
   useUpdateTransactionMutation,
   useDeleteTransactionMutation,
+  useGenerateTransactionReportMutation,
 } = transactionsApi;

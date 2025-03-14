@@ -1,7 +1,8 @@
 import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
-import { Delete, Visibility } from "@mui/icons-material";
+import { Delete, Visibility, GetApp } from "@mui/icons-material";
 import { Typography, Modal, Box } from "@mui/material";
 import { useState } from "react";
+import { useGenerateTransactionReportMutation } from "../../services/transactionsApi";
 
 interface TransactionsTableProps {
   transactions: any[];
@@ -20,6 +21,8 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
     null
   );
 
+  const [generateTransactionReport] = useGenerateTransactionReportMutation(); 
+
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 90 },
     { field: "name", headerName: "Название", width: 200 },
@@ -36,7 +39,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
       field: "actions",
       type: "actions",
       headerName: "Действия",
-      width: 250,
+      width: 300, 
       getActions: ({ row }) => [
         <GridActionsCellItem
           icon={<Visibility />}
@@ -50,14 +53,36 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
           onClick={() => onDelete(row.id)}
           color="error"
         />,
+        <GridActionsCellItem
+          icon={<GetApp />} 
+          label="Отчет"
+          onClick={() => handleGenerateReport(row.id)} 
+          color="primary"
+        />,
       ],
     },
   ];
 
+  const handleGenerateReport = async (transactionId: number) => {
+    try {
+      const reportBlob = await generateTransactionReport(
+        transactionId
+      ).unwrap();
+      const url = URL.createObjectURL(reportBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `transaction_${transactionId}.docx`;
+      link.click();
+      URL.revokeObjectURL(url); 
+    } catch (error) {
+      console.error("Ошибка при получении отчета:", error);
+    }
+  };
+
   const handleCloseModal = () => setSelectedTransaction(null);
 
   return (
-    <div style={{ height: '100%', width: "100%" }}>
+    <div style={{ height: "100%", width: "100%" }}>
       {isLoading ? (
         <Typography>Загрузка...</Typography>
       ) : isError ? (
