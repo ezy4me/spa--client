@@ -66,7 +66,7 @@ const Sidebar: React.FC = () => {
       text: "Филиалы",
       path: "location",
       icon: <LocationOnIcon />,
-      roles: ["admin", "manager"],
+      roles: ["manager"],
     },
     {
       text: "Клиенты",
