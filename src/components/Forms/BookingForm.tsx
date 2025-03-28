@@ -74,11 +74,18 @@ const BookingForm = ({
       setValue("status", booking.status || "");
       setValue("startTime", formatDate(booking.startTime));
       setValue("endTime", formatDate(booking.endTime));
-      setSelectedRoom(rooms.find((room) => room.id === booking.roomId));
-      setSelectedClient(
-        clients.find((client) => client.id === booking.clientId)
-      );
+
+      // Устанавливаем значения комнаты и клиента
+      const room = rooms.find((room) => room.id === booking.roomId);
+      const client = clients.find((client) => client.id === booking.clientId);
+
+      setSelectedRoom(room);
+      setSelectedClient(client);
       setStatus(booking.status || "");
+
+      // Устанавливаем значение в форме для поля `roomId` и `clientId`
+      setValue("roomId", room?.id || "");
+      setValue("clientId", client?.id || "");
     }
   }, [booking, rooms, clients, setValue]);
 
@@ -173,7 +180,10 @@ const BookingForm = ({
                     options={rooms}
                     getOptionLabel={(option) => option.name}
                     value={selectedRoom}
-                    onChange={(_, newValue) => setSelectedRoom(newValue)}
+                    onChange={(_, newValue) => {
+                      setSelectedRoom(newValue);
+                      setValue("roomId", newValue?.id || "");
+                    }}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -182,9 +192,7 @@ const BookingForm = ({
                         helperText={errors.roomId?.message}
                       />
                     )}
-                    isOptionEqualToValue={(option, value) =>
-                      option.id === value.id
-                    }
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
                   />
                 )}
               />
@@ -199,7 +207,10 @@ const BookingForm = ({
                     options={clients}
                     getOptionLabel={(option) => option.fullName}
                     value={selectedClient}
-                    onChange={(_, newValue) => setSelectedClient(newValue)}
+                    onChange={(_, newValue) => {
+                      setSelectedClient(newValue);
+                      setValue("clientId", newValue?.id || "");
+                    }}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -208,9 +219,7 @@ const BookingForm = ({
                         helperText={errors.clientId?.message}
                       />
                     )}
-                    isOptionEqualToValue={(option, value) =>
-                      option.id === value.id
-                    }
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
                   />
                 )}
               />
