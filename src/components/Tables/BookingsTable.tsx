@@ -2,13 +2,28 @@ import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
 import { Edit, Delete } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 
+interface Booking {
+  id: number;
+  startTime: string;
+  endTime: string;
+  status: string; 
+  comment: string;
+}
+
 interface BookingsTableProps {
-  bookings: any[];
-  onEdit: (booking: any) => void;
-  onDelete: (id: number) => void; // Adjusted type to number
+  bookings: Booking[];
+  onEdit: (booking: Booking) => void;
+  onDelete: (id: number) => void;
   isLoading: boolean;
   isError: boolean;
 }
+
+const statusColors: Record<string, any> = {
+  "Оплачено": "#388E3C",  
+  "Резерв": "#e4d01d",    
+  "Отменен": "#D32F2F",   
+  "Завершен": "#1976D2",  
+};
 
 const BookingsTable: React.FC<BookingsTableProps> = ({
   bookings,
@@ -19,6 +34,12 @@ const BookingsTable: React.FC<BookingsTableProps> = ({
 }) => {
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 90 },
+    {
+      field: "room",
+      headerName: "Помещение",
+      width: 180,
+      valueGetter: (_, row) => row.room.name || "",
+    },
     {
       field: "startTime",
       headerName: "Дата начала",
@@ -31,7 +52,16 @@ const BookingsTable: React.FC<BookingsTableProps> = ({
       width: 180,
       valueGetter: (_, row) => new Date(row.endTime).toLocaleString(),
     },
-    { field: "status", headerName: "Статус", width: 150 },
+    {
+      field: "status",
+      headerName: "Статус",
+      width: 150,
+      renderCell: (params: any) => (
+        <Typography mt={1.7} sx={{ color: statusColors[params.value] || "black" }}>
+          {params.value}
+        </Typography>
+      ),
+    },
     { field: "comment", headerName: "Комментарий", width: 250 },
     {
       field: "actions",
@@ -48,7 +78,7 @@ const BookingsTable: React.FC<BookingsTableProps> = ({
         <GridActionsCellItem
           icon={<Delete />}
           label="Удалить"
-          onClick={() => onDelete(row.id)} // Ensure 'row.id' is a number
+          onClick={() => onDelete(row.id)}
           color="error"
         />,
       ],

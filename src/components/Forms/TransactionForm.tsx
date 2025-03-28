@@ -206,8 +206,8 @@ const TransactionForm = ({
                     fullWidth
                     error={!!errors.type}
                     displayEmpty>
-                    <MenuItem value="purchase">Покупка</MenuItem>
-                    <MenuItem value="sale">Продажа</MenuItem>
+                    <MenuItem value="Товар">Товар</MenuItem>
+                    <MenuItem value="Услуга">Услуга</MenuItem>
                   </Select>
                 )}
               />
@@ -223,8 +223,8 @@ const TransactionForm = ({
                     fullWidth
                     error={!!errors.paymentMethod}
                     displayEmpty>
-                    <MenuItem value="cash">Наличные</MenuItem>
-                    <MenuItem value="card">Карта</MenuItem>
+                    <MenuItem value="Наличные">Наличные</MenuItem>
+                    <MenuItem value="Карта">Карта</MenuItem>
                   </Select>
                 )}
               />
@@ -349,7 +349,7 @@ const TransactionForm = ({
             </Grid>
 
             {/* Итоговая сумма */}
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
               <Typography variant="h6" sx={{ mt: 2 }}>
                 Итоговая сумма: {totalAmount.toFixed(2)} руб.
               </Typography>

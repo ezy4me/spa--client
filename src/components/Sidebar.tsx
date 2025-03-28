@@ -21,9 +21,9 @@ import PeopleIcon from "@mui/icons-material/People";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import SpaIcon from "@mui/icons-material/Spa";
-import LocationOnIcon from "@mui/icons-material/LocationOn";  
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSidebar } from "../contexts/SidebarContext";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/slice/authSlice";
@@ -35,6 +35,7 @@ const collapsedWidth = 60;
 const Sidebar: React.FC = () => {
   const { isOpen, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const userRole = useSelector((state: RootState) => state.auth.user?.role);
 
@@ -44,83 +45,34 @@ const Sidebar: React.FC = () => {
   };
 
   const allMenuItems = [
-    {
-      text: "Главная",
-      path: "dashboard",
-      icon: <DashboardIcon />,
-      roles: ["admin", "manager"],
-    },
-    {
-      text: "Бронирование",
-      path: "booking",
-      icon: <BookIcon />,
-      roles: ["admin", "manager"],
-    },
-    {
-      text: "Номера",
-      path: "room",
-      icon: <SpaIcon />,
-      roles: ["admin", "manager"],
-    },
-    {
-      text: "Филиалы",
-      path: "location",
-      icon: <LocationOnIcon />,
-      roles: ["manager"],
-    },
-    {
-      text: "Клиенты",
-      path: "client",
-      icon: <PersonIcon />,
-      roles: ["admin", "manager"],
-    },
-    {
-      text: "Оплата",
-      path: "payment",
-      icon: <PaymentIcon />,
-      roles: ["admin", "manager"],
-    },
-    {
-      text: "Склад",
-      path: "inventory",
-      icon: <InventoryIcon />,
-      roles: ["admin", "manager"],
-    },
-    {
-      text: "Категории товаров",
-      path: "category",
-      icon: <CategoryIcon />,
-      roles: ["admin", "manager"],
-    },
-    {
-      text: "Выручка",
-      path: "revenue",
-      icon: <MonetizationOnIcon />,
-      roles: ["manager"],
-    },
-    {
-      text: "Сотрудники",
-      path: "employees",
-      icon: <PeopleIcon />,
-      roles: ["manager"],
-    },
-    {
-      text: "Смены",
-      path: "shift",
-      icon: <AccessTimeIcon />,
-      roles: ["admin"],
-    },
+    { text: "Главная", path: "dashboard", icon: <DashboardIcon />, roles: ["admin", "manager"] },
+    { text: "Бронирование", path: "booking", icon: <BookIcon />, roles: ["admin", "manager"] },
+    { text: "Номера", path: "room", icon: <SpaIcon />, roles: ["admin", "manager"] },
+    { text: "Филиалы", path: "location", icon: <LocationOnIcon />, roles: ["manager"] },
+    { text: "Клиенты", path: "client", icon: <PersonIcon />, roles: ["admin", "manager"] },
+    { text: "Оплата", path: "payment", icon: <PaymentIcon />, roles: ["admin", "manager"] },
+    { text: "Склад", path: "inventory", icon: <InventoryIcon />, roles: ["admin", "manager"] },
+    { text: "Категории товаров", path: "category", icon: <CategoryIcon />, roles: ["admin", "manager"] },
+    { text: "Выручка", path: "revenue", icon: <MonetizationOnIcon />, roles: ["manager"] },
+    { text: "Сотрудники", path: "employees", icon: <PeopleIcon />, roles: ["manager"] },
+    { text: "Смены", path: "shift", icon: <AccessTimeIcon />, roles: ["admin"] },
   ];
 
   const normalizedRole = userRole ? userRole.toLowerCase() : "";
 
   const menuItems = allMenuItems
     .filter((item) => item.roles.includes(normalizedRole))
-    .map(({ text, path, icon }) => ({
-      text,
-      path: `/${normalizedRole}/${path}`,
-      icon,
-    }));
+    .map(({ text, path, icon }) => {
+      const fullPath = `/${normalizedRole}/${path}`;
+      const isActive = location.pathname === fullPath;
+
+      return {
+        text,
+        path: fullPath,
+        icon,
+        isActive,
+      };
+    });
 
   return (
     <Drawer
@@ -145,12 +97,17 @@ const Sidebar: React.FC = () => {
       </Toolbar>
 
       <List sx={{ flexGrow: 1, padding: 0 }}>
-        {menuItems.map(({ text, path, icon }) => (
+        {menuItems.map(({ text, path, icon, isActive }) => (
           <ListItemButton
             sx={{
               paddingY: 1.5,
               justifyContent: isOpen ? "initial" : "center",
               whiteSpace: "nowrap",
+              backgroundColor: isActive ? "primary.main" : "transparent",
+              color: isActive ? "white" : "inherit",
+              "&:hover": {
+                backgroundColor: isActive ? "primary.dark" : "action.hover",
+              },
             }}
             key={path}
             component={Link}
@@ -159,6 +116,7 @@ const Sidebar: React.FC = () => {
               sx={{
                 minWidth: 36,
                 justifyContent: !isOpen ? "center" : "inherit",
+                color: isActive ? "white" : "inherit",
               }}>
               {icon}
             </ListItemIcon>
@@ -176,10 +134,7 @@ const Sidebar: React.FC = () => {
             justifyContent: isOpen ? "initial" : "center",
             whiteSpace: "nowrap",
           }}>
-          <ListItemIcon
-            sx={{
-              justifyContent: !isOpen ? "center" : "inherit",
-            }}>
+          <ListItemIcon sx={{ justifyContent: !isOpen ? "center" : "inherit" }}>
             <ExitToAppIcon color="error" />
           </ListItemIcon>
           {isOpen && <ListItemText primary="Выход" />}

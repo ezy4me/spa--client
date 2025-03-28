@@ -14,7 +14,7 @@ const AppBar: React.FC = () => {
   const { toggleSidebar } = useSidebar();
 
   return (
-    <MuiAppBar position="fixed" sx={{ zIndex: 1201 }}>
+    <MuiAppBar elevation={4} position="fixed" sx={{ zIndex: 1201 }}>
       <Toolbar>
         <IconButton
           sx={{ marginRight: 1, padding: .5 }}
