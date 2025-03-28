@@ -102,7 +102,8 @@ const RoomForm = ({
                     fullWidth
                     error={!!errors.status}
                     helperText={errors.status?.message}>
-                    <MenuItem value="Доступна">Доступна</MenuItem>
+                    <MenuItem value="Свободна">Свободна</MenuItem>
+                    <MenuItem value="Зарезервирована">Зарезервирована</MenuItem>
                     <MenuItem value="Занята">Занята</MenuItem>
                   </TextField>
                 )}
