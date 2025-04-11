@@ -132,7 +132,7 @@ const Employees = () => {
         employees={employees}
         onEdit={handleOpenEdit}
         onDelete={handleDeleteClick}
-        onViewShifts={handleViewShifts} // Передача функции
+        onViewShifts={handleViewShifts} 
         isLoading={isLoading}
         isError={isError}
       />

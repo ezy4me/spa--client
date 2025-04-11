@@ -9,7 +9,6 @@ import Bookings from "../pages/Bookings";
 import Payment from "../pages/Payment";
 import Inventory from "../pages/Inventory";
 import Employees from "../pages/Employees";
-import Notifications from "../pages/Notifications";
 import Clients from "../pages/Clients";
 import ProtectedRoute from "../components/ProtectedRoute";
 import Revenue from "../pages/Revenue";
@@ -69,7 +68,6 @@ const AppRoutes = () => (
               <Route path="category" element={<Category />} />
               <Route path="revenue" element={<Revenue />} />
               <Route path="employees" element={<Employees />} />
-              <Route path="notification" element={<Notifications />} />
             </Routes>
           </ManagerLayout>
         }

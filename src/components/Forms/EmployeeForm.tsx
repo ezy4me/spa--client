@@ -202,7 +202,7 @@ const EmployeeForm = ({
                         locations.find(
                           (location) => location.id === field.value
                         ) || null
-                      } // Установка дефолтного значения
+                      } 
                       onChange={(_, value) => field.onChange(value?.id || "")}
                       renderInput={(params) => (
                         <TextField

@@ -6,7 +6,7 @@ const EmployeesTable: React.FC<any> = ({
   employees,
   onEdit,
   onDelete,
-  onViewShifts, // Новая функция для просмотра смен
+  onViewShifts, 
   isLoading,
   isError,
 }) => {
@@ -34,7 +34,7 @@ const EmployeesTable: React.FC<any> = ({
           color="error"
         />,
         <GridActionsCellItem
-          icon={<Schedule />} // Иконка расписания
+          icon={<Schedule />}
           label="Просмотр смен"
           onClick={() => onViewShifts(row.id)}
           color="info"

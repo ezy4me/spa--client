@@ -348,7 +348,6 @@ const TransactionForm = ({
               </TableContainer>
             </Grid>
 
-            {/* Итоговая сумма */}
             <Grid item xs={12} sm={12}>
               <Typography variant="h6" sx={{ mt: 2 }}>
                 Итоговая сумма: {totalAmount.toFixed(2)} руб.
