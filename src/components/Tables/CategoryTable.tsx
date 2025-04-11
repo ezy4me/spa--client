@@ -35,7 +35,7 @@ const CategoryTable: React.FC<any> = ({
   ];
 
   return (
-    <div style={{ height: '100%', width: "100%" }}>
+    <div style={{ height: 600, width: "100%", overflowY: "auto" }}>
       {isLoading ? (
         <Typography>Загрузка...</Typography>
       ) : isError ? (
@@ -53,6 +53,7 @@ const CategoryTable: React.FC<any> = ({
           }}
           pageSizeOptions={[20]}
           disableRowSelectionOnClick
+          autoHeight={false}
         />
       )}
     </div>

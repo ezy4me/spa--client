@@ -87,7 +87,7 @@ const Inventory = () => {
   };
 
   return (
-    <div style={{ padding: 20 }}>
+    <div style={{ padding: 20}}>
       <Typography variant="h4" gutterBottom>
         Инвентарь
       </Typography>

@@ -43,7 +43,7 @@ const InventoryTable: React.FC<any> = ({ products, onEdit, onDelete, isLoading, 
   ];
 
   return (
-    <div style={{ height: '100%', width: "100%" }}>
+    <div style={{ height: 800, width: "100%", overflowY: "auto" }}>
       {isLoading ? (
         <Typography>Загрузка...</Typography>
       ) : isError ? (
@@ -61,6 +61,7 @@ const InventoryTable: React.FC<any> = ({ products, onEdit, onDelete, isLoading, 
           }}
           pageSizeOptions={[20]}
           disableRowSelectionOnClick
+          autoHeight={false}
         />
       )}
     </div>

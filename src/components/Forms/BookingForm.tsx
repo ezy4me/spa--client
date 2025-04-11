@@ -52,9 +52,9 @@ const BookingForm = ({
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
+
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
   const [selectedClient, setSelectedClient] = useState<any>(null);
-  const [status, setStatus] = useState<string>("");
 
   useEffect(() => {
     if (booking) {
@@ -75,15 +75,12 @@ const BookingForm = ({
       setValue("startTime", formatDate(booking.startTime));
       setValue("endTime", formatDate(booking.endTime));
 
-      // Устанавливаем значения комнаты и клиента
       const room = rooms.find((room) => room.id === booking.roomId);
       const client = clients.find((client) => client.id === booking.clientId);
 
       setSelectedRoom(room);
       setSelectedClient(client);
-      setStatus(booking.status || "");
 
-      // Устанавливаем значение в форме для поля `roomId` и `clientId`
       setValue("roomId", room?.id || "");
       setValue("clientId", client?.id || "");
     }
@@ -94,7 +91,6 @@ const BookingForm = ({
       ...data,
       roomId: selectedRoom?.id,
       clientId: selectedClient?.id,
-      status: status,
     };
     onSave(formattedData);
   };
@@ -192,7 +188,9 @@ const BookingForm = ({
                         helperText={errors.roomId?.message}
                       />
                     )}
-                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                    isOptionEqualToValue={(option, value) =>
+                      option.id === value.id
+                    }
                   />
                 )}
               />
@@ -219,27 +217,34 @@ const BookingForm = ({
                         helperText={errors.clientId?.message}
                       />
                     )}
-                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                    isOptionEqualToValue={(option, value) =>
+                      option.id === value.id
+                    }
                   />
                 )}
               />
             </Grid>
             <Grid item xs={12}>
-              <FormControl fullWidth error={!!errors.status}>
-                <InputLabel>Статус</InputLabel>
-                <Select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  label="Статус">
-                  <MenuItem value="Оплачено">Оплачено</MenuItem>
-                  <MenuItem value="Резерв">Резерв</MenuItem>
-                  <MenuItem value="Отменен">Отменен</MenuItem>
-                  <MenuItem value="Завершен">Завершен</MenuItem>
-                </Select>
-                {errors.status && (
-                  <span style={{ color: "red" }}>{errors.status?.message}</span>
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <FormControl fullWidth error={!!errors.status}>
+                    <InputLabel>Статус</InputLabel>
+                    <Select {...field} label="Статус">
+                      <MenuItem value="Оплачено">Оплачено</MenuItem>
+                      <MenuItem value="Резерв">Резерв</MenuItem>
+                      <MenuItem value="Отменен">Отменен</MenuItem>
+                      <MenuItem value="Завершен">Завершен</MenuItem>
+                    </Select>
+                    {errors.status && (
+                      <span style={{ color: "red" }}>
+                        {errors.status?.message}
+                      </span>
+                    )}
+                  </FormControl>
                 )}
-              </FormControl>
+              />
             </Grid>
           </Grid>
           <Box
